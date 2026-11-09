@@ -21,15 +21,15 @@ Open http://localhost:5173 and create the admin account. Data (SQLite database a
 
 ## Deploy as a Home Assistant add-on
 
-1. Push this repo to GitHub. The **Build image** workflow publishes `ghcr.io/<you>/storage`. Make the package public, or log Home Assistant in to GHCR.
-2. Replace `OWNER` in `ha-addon/repository.yaml` and `ha-addon/storage/config.yaml` with your GitHub username.
-3. In Home Assistant: **Settings → Add-ons → Add-on store → ⋮ → Repositories**, add your repo URL, then install **Storage**.
-4. Set **public_url** to `https://storage.garrettorick.com` *before anyone signs up*. Passkeys are tied to that exact address.
-5. Point the domain at `http://<home-assistant-ip>:3000` with Cloudflared or Nginx Proxy Manager.
+This repository doubles as a Home Assistant add-on repository (`repository.yaml` plus the `storage/` add-on).
 
-The add-on stores everything in its `/data`, so it is included in Home Assistant backups.
+1. In Home Assistant: **Settings → Apps → App store → ⋮ → Repositories** and add `https://github.com/gorick1/storage`, then install **Storage**. Home Assistant builds it locally from the git tag matching the add-on version (`v0.1.0`).
+2. Set **public_url** to `https://storage.garrettorick.com` *before anyone signs up* (passkeys are tied to that exact address), then start it.
+3. Route the domain to `http://<home-assistant-ip>:3000` through the Cloudflare tunnel.
 
-> The add-on folder has to sit at the root of the repository Home Assistant reads. Either move `ha-addon/*` to the repo root, or keep a separate small add-on repository that contains just those files.
+To ship an update: bump `version` in `package.json` and `storage/config.yaml`, tag `v<version>`, push, then update the app in Home Assistant.
+
+Data (database and photos) lives in the app's `/data`, so it is included in Home Assistant backups.
 
 ## Printer setup (Zebra ZD420t)
 
