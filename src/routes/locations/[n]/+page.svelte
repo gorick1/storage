@@ -9,9 +9,12 @@
   import { toast } from '$lib/client/toast.svelte';
   import { displayCode } from '$lib/codes';
   import { formatMoney } from '$lib/money';
+  import { rememberView } from '$lib/client/actions.svelte';
+  import { onMount } from 'svelte';
 
   let { data, form } = $props();
   let editing = $state(false);
+  onMount(() => rememberView({ kind: 'location', number: data.loc.number, name: data.loc.name }));
   let adding = $state(false);
   let confirmDelete = $state(false);
   const itemCount = $derived(data.boxes.reduce((n, b) => n + (b.item_count ?? 0), 0) + data.loose.length);

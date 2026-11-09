@@ -71,8 +71,7 @@ export const actions = {
   delete: async ({ params, locals }) => {
     const item = getItem(Number(params.n));
     if (!item) error(404);
-    const files = deleteItem(item.id, locals.user!.id);
-    await removePhotoFiles(files);
-    redirect(303, item.box_number ? `/boxes/${item.box_number}` : '/');
+    deleteItem(item.id, locals.user!.id);
+    redirect(303, `${item.box_number ? `/boxes/${item.box_number}` : '/'}?deleted=${item.id}`);
   }
 };

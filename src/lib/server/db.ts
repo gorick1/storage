@@ -181,6 +181,13 @@ const MIGRATIONS: string[] = [
   ALTER TABLE items ADD COLUMN price_status TEXT NOT NULL DEFAULT 'none';
   CREATE INDEX items_brand ON items(brand);
   CREATE INDEX items_category ON items(category);
+  `,
+  `
+  ALTER TABLE items ADD COLUMN deleted_at INTEGER;
+  ALTER TABLE items ADD COLUMN missing_at INTEGER;
+  ALTER TABLE boxes ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0;
+  CREATE VIEW live_items AS SELECT * FROM items WHERE deleted_at IS NULL;
+  CREATE INDEX items_deleted ON items(deleted_at);
   `
 ];
 

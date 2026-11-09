@@ -4,9 +4,14 @@
   import ItemRow from '$lib/components/ItemRow.svelte';
   import BoxTile from '$lib/components/BoxTile.svelte';
   import Icon from '$lib/components/Icon.svelte';
+  import SelectBar from '$lib/components/SelectBar.svelte';
 
   let { data } = $props();
   let q = $state(data.q);
+  let selecting = $state(false);
+  let picked = $state<number[]>([]);
+  const toggle = (id: number) => (picked = picked.includes(id) ? picked.filter((x) => x !== id) : [...picked, id]);
+  const endSelect = () => { selecting = false; picked = []; };
   let t: ReturnType<typeof setTimeout>;
   $effect(() => { q = data.q; });
 
@@ -57,13 +62,19 @@
   {/if}
 
   {#if data.items.length}
-    <h3 class="group-label">Items</h3>
-    <div class="group">{#each data.items as item (item.id)}<ItemRow {item} />{/each}</div>
+    <div class="items-head">
+      <h3 class="group-label">Items</h3>
+      <button class="btn plain" onclick={() => (selecting ? endSelect() : (selecting = true))}>{selecting ? 'Done' : 'Select'}</button>
+    </div>
+    <div class="group">{#each data.items as item (item.id)}<ItemRow {item} {selecting} selected={picked.includes(item.id)} onToggle={toggle} />{/each}</div>
   {/if}
 </div>
+{#if selecting}<SelectBar ids={picked} onDone={endSelect} />{/if}
 
 <style>
   .top { margin-top: 10px; }
+  .items-head { display: flex; align-items: flex-end; justify-content: space-between; }
+  .items-head .btn { height: 34px; }
   .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   @media (min-width: 640px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (min-width: 1100px) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

@@ -19,6 +19,29 @@
   let manual = $state('');
   let last = { code: '', at: 0 };
   let controls: { stop: () => void } | null = null;
+  let track: MediaStreamTrack | null = null;
+  let torchOk = $state(false);
+  let torch = $state(false);
+  let zoomRange = $state<{ min: number; max: number; step: number } | null>(null);
+  let zoom = $state(1);
+
+  function setupTrack() {
+    track = (video.srcObject as MediaStream | null)?.getVideoTracks()[0] ?? null;
+    const caps = (track?.getCapabilities?.() ?? {}) as MediaTrackCapabilities & { torch?: boolean; zoom?: { min: number; max: number; step: number } };
+    torchOk = !!caps.torch;
+    if (caps.zoom && caps.zoom.max > caps.zoom.min) {
+      zoomRange = { min: caps.zoom.min, max: Math.min(caps.zoom.max, caps.zoom.min * 8), step: caps.zoom.step || 0.1 };
+      zoom = caps.zoom.min;
+    }
+  }
+  async function toggleTorch() {
+    torch = !torch;
+    await track?.applyConstraints({ advanced: [{ torch } as MediaTrackConstraintSet] }).catch(() => (torch = false));
+  }
+  async function setZoom(z: number) {
+    zoom = z;
+    await track?.applyConstraints({ advanced: [{ zoom: z } as MediaTrackConstraintSet] }).catch(() => {});
+  }
 
   async function handle(code: string, points?: { x: number; y: number }[]) {
     const t = Date.now();
@@ -86,6 +109,7 @@
           if (result) handle(result.getText(), result.getResultPoints().map((p) => ({ x: p.getX(), y: p.getY() })));
         });
         camState = 'on';
+        setTimeout(setupTrack, 300);
       } catch (e) {
         camState = (e as Error).name === 'NotAllowedError' ? 'denied' : 'none';
       }
@@ -116,6 +140,16 @@
         <button aria-pressed={mode === 'find'} onclick={() => (mode = 'find')}>Find</button>
         <button aria-pressed={mode === 'into'} onclick={() => (mode = 'into')}>Pack a box</button>
       </div>
+    </div>
+    <div class="cam-tools">
+      {#if torchOk}<button class="tool glass" class:on={torch} onclick={toggleTorch} aria-label={torch ? 'Turn off light' : 'Turn on light'} aria-pressed={torch}><Icon name="bolt" size={20} stroke={2.1} /></button>{/if}
+      {#if zoomRange}
+        <div class="zoom glass">
+          {#each [zoomRange.min, Math.min(zoomRange.max, zoomRange.min * 2), Math.min(zoomRange.max, zoomRange.min * 4)] as z}
+            <button class:on={Math.abs(zoom - z) < 0.05} onclick={() => setZoom(z)}>{(z / zoomRange.min).toFixed(0)}×</button>
+          {/each}
+        </div>
+      {/if}
     </div>
     <p class="hint">
       {#if mode === 'find'}Point at any Storage label{:else if !target}Scan the box label first{:else}Scan items to put them in <strong>{target.name}</strong>{/if}
@@ -153,7 +187,13 @@
   video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .cam-msg { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 32px; text-align: center; color: rgba(255,255,255,.75); }
   .cam-msg p { max-width: 30ch; margin: 0; }
-  .reticle { position: absolute; left: 50%; top: 46%; width: min(64vw, 280px); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 28px;
+  .cam-tools { position: absolute; left: 0; right: 0; bottom: 64px; display: flex; justify-content: center; align-items: center; gap: 12px; }
+  .tool { width: 48px; height: 48px; border-radius: 24px; border: 0; display: grid; place-items: center; color: #fff; background: rgba(40,40,44,.45); cursor: pointer; }
+  .tool.on { background: #fff; color: #000; }
+  .zoom { display: flex; gap: 2px; padding: 4px; border-radius: 24px; background: rgba(40,40,44,.45); }
+  .zoom button { width: 40px; height: 40px; border-radius: 20px; border: 0; background: transparent; color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .zoom button.on { background: rgba(255,255,255,.9); color: #000; }
+  .reticle { position: absolute; left: 50%; top: 44%; width: min(78vw, 340px); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 28px;
     box-shadow: 0 0 0 4px rgba(255,255,255,.9), 0 0 0 100vmax rgba(0,0,0,.28); transition: all 0.35s var(--ease); pointer-events: none; }
   .reticle.locked { box-shadow: 0 0 0 4px var(--c-yellow), 0 0 0 100vmax rgba(0,0,0,.45); border-radius: 14px; }
   .top { position: absolute; top: calc(var(--safe-t) + 12px); left: 12px; right: 12px; display: flex; align-items: center; gap: 12px; }

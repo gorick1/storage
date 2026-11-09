@@ -11,6 +11,7 @@
   import { api } from '$lib/client/api';
   import { toast } from '$lib/client/toast.svelte';
   import { displayCode, parseCode } from '$lib/codes';
+  import { queueAdd } from '$lib/client/offline.svelte';
 
   let { data } = $props();
 
@@ -32,6 +33,76 @@
   let paidOn = $state('');
   let lookupPrice = $state(true);
   let showDetails = $state(false);
+  let mode = $state<'one' | 'box'>('one');
+  let saved = $state(false);
+
+  // Whole-box capture
+  type Draft = { keep: boolean; name: string; brand: string; model: string; category: string; quantity: number; description: string };
+  let boxPhoto = $state<PreparedPhoto | null>(null);
+  let drafts = $state<Draft[]>([]);
+  let boxAi = $state<'idle' | 'thinking' | 'done' | 'error'>('idle');
+  let boxCamera: HTMLInputElement;
+
+  // Duplicate check while typing
+  type Similar = { id: number; number: number; name: string; box_name: string | null; location_name: string | null; cover: string | null };
+  let similar = $state<Similar[]>([]);
+  let simTimer: ReturnType<typeof setTimeout>;
+  $effect(() => {
+    const n = name.trim(), b = brand.trim();
+    clearTimeout(simTimer);
+    if (n.length < 3) { similar = []; return; }
+    simTimer = setTimeout(async () => {
+      try {
+        const r = await api<{ items: Similar[] }>(`/api/items/similar?name=${encodeURIComponent(n)}&brand=${encodeURIComponent(b)}`);
+        similar = r.items;
+      } catch { similar = []; }
+    }, 450);
+  });
+
+  async function onBoxPhoto(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const f = input.files?.[0];
+    input.value = '';
+    if (!f) return;
+    boxPhoto = await preparePhoto(f);
+    boxAi = 'thinking';
+    drafts = [];
+    try {
+      const r = await api<{ items: Omit<Draft, 'keep'>[] }>('/api/ai/identify-many', { image: await blobToBase64(boxPhoto.full), mediaType: 'image/jpeg' });
+      drafts = r.items.map((i) => ({ ...i, keep: true }));
+      boxAi = 'done';
+    } catch (err) {
+      boxAi = 'error';
+      aiNote = (err as Error).message;
+    }
+  }
+
+  async function saveBox() {
+    const keep = drafts.filter((d) => d.keep && d.name.trim());
+    if (!keep.length || !boxPhoto) return;
+    saving = true;
+    const fd = new FormData();
+    fd.set('items', JSON.stringify(keep));
+    if (dest.box) fd.set('box_id', String(dest.box.id));
+    if (dest.location) fd.set('location_id', String(dest.location.id));
+    fd.set('print', printLabel ? 'on' : 'off');
+    fd.set('lookup_price', lookupPrice ? 'on' : 'off');
+    fd.append('full', boxPhoto.full, 'box.jpg');
+    fd.append('thumb', boxPhoto.thumb, 'box_t.jpg');
+    try {
+      const r = await api<{ created: { number: number; name: string }[] }>('/api/items/batch', fd);
+      toast(`Added ${r.created.length} items${dest.box ? ` to ${dest.box.name}` : ''}${printLabel ? '. Printing labels…' : ''}`, { icon: 'check' });
+      boxPhoto = null;
+      drafts = [];
+      boxAi = 'idle';
+      saved = true;
+      setTimeout(() => (saved = false), 1400);
+    } catch (err) {
+      error = (err as Error).message;
+    } finally {
+      saving = false;
+    }
+  }
   let printLabel = $state(true);
   let picking = $state(false);
   let ai = $state<'idle' | 'thinking' | 'done' | 'error'>('idle');
@@ -150,8 +221,22 @@
     fd.set('lookup_price', lookupPrice ? 'on' : 'off');
     for (const [k, v] of Object.entries({ brand, model, category, condition, serial_number: serial, purchase_price: paid, purchase_date: paidOn })) fd.set(k, v);
     photos.forEach((p, i) => { fd.append(`full_${i}`, p.full, `p${i}.jpg`); fd.append(`thumb_${i}`, p.thumb, `t${i}.jpg`); });
+    let res: Response;
     try {
-      const res = await fetch(location.pathname, { method: 'POST', body: fd, headers: { accept: 'application/json', 'x-sveltekit-action': 'true' } });
+      res = await fetch(location.pathname, { method: 'POST', body: fd, headers: { accept: 'application/json', 'x-sveltekit-action': 'true' } });
+    } catch {
+      // No connection: keep it on the device and upload when the signal comes back.
+      try {
+        await queueAdd(fd, name);
+        toast(`No signal. ${name} is saved on this phone and will upload automatically.`, { icon: 'clock', ms: 6000 });
+        reset();
+      } catch {
+        error = 'No connection, and this browser can’t store it offline. Try again when you have signal.';
+      }
+      saving = false;
+      return;
+    }
+    try {
       const out = deserialize(await res.text());
       if (out.type !== 'success') throw new Error((out.type === 'failure' && (out.data?.error as string)) || 'Could not save. Check your connection and try again.');
       const created = out.data!.created as { number: number; name: string };
@@ -161,6 +246,8 @@
       else if (job) toast(`Saved ${created.name}. Printing label…`, { icon: 'printer', printJob: job.id, ms: 7000, action: { label: 'Cancel print', run: () => api(`/api/print/${job.id}`, { action: 'cancel' }).then(() => {}) } });
       else toast(`Saved ${created.name}`, { icon: 'check', action: { label: 'View', run: () => goto(`/items/${created.number}`) } });
       reset();
+      saved = true;
+      setTimeout(() => (saved = false), 1400);
       await tick();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
@@ -186,6 +273,56 @@
     <span class="change">Change</span>
   </button>
 
+  <div class="segmented mode" role="group" aria-label="Add mode">
+    <button type="button" aria-pressed={mode === 'one'} onclick={() => (mode = 'one')}>One item</button>
+    <button type="button" aria-pressed={mode === 'box'} onclick={() => (mode = 'box')}>Whole box</button>
+  </div>
+
+  {#if mode === 'box'}
+    <div class="boxmode">
+      {#if !boxPhoto}
+        <button type="button" class="shutter big" onclick={() => boxCamera.click()} disabled={!data.aiReady}>
+          <Icon name="camera" size={34} stroke={1.8} />
+          <span>Photograph the open box</span>
+          <small>{data.aiReady ? 'The AI lists everything inside. You pick what to keep.' : 'Needs your Anthropic API key in Settings.'}</small>
+        </button>
+      {:else}
+        <div class="boxshot"><img src={boxPhoto.url} alt="Box contents" /><button type="button" class="btn small gray retake" onclick={() => boxCamera.click()}>Retake</button></div>
+      {/if}
+      <input bind:this={boxCamera} type="file" accept="image/*" capture="environment" class="sr-only" onchange={onBoxPhoto} />
+
+      {#if boxAi === 'thinking'}
+        <div class="ai thinking"><Icon name="sparkles" size={18} stroke={2} /><span>Finding everything in the photo…</span></div>
+      {:else if boxAi === 'error'}
+        <div class="ai err"><Icon name="sparkles" size={18} stroke={2} /><span>{aiNote}</span></div>
+      {:else if drafts.length}
+        <h3 class="group-label">{drafts.filter((d) => d.keep).length} of {drafts.length} selected</h3>
+        <div class="group">
+          {#each drafts as d, i}
+            <div class="row draft" class:off={!d.keep}>
+              <button type="button" class="check" class:on={d.keep} aria-pressed={d.keep} aria-label={d.keep ? 'Skip' : 'Keep'} onclick={() => (drafts[i].keep = !d.keep)}>{#if d.keep}<Icon name="check" size={14} stroke={3} />{/if}</button>
+              <span class="grow">
+                <input class="left dname-in" bind:value={drafts[i].name} aria-label="Item name" />
+                <span class="sub">{[d.brand, d.category].filter(Boolean).join(' · ') || ' '}</span>
+              </span>
+              <span class="dq num">×{d.quantity}</span>
+            </div>
+          {/each}
+        </div>
+        <div class="group" style="margin-top:16px">
+          <label class="row"><span class="grow">Print a label for each</span><input type="checkbox" class="switch" bind:checked={printLabel} /></label>
+          <label class="row"><span class="grow">Look up prices online</span><input type="checkbox" class="switch" bind:checked={lookupPrice} /></label>
+        </div>
+        <div class="savebar">
+          <button type="button" class="btn block morph" class:done={saved} disabled={saving || !drafts.some((d) => d.keep)} onclick={saveBox}>
+            {#if saving}<span class="spinner"></span>{:else}<Icon name="check" size={20} stroke={2.4} />{/if}
+            {saving ? 'Adding…' : `Add ${drafts.filter((d) => d.keep).length} items`}
+          </button>
+        </div>
+      {/if}
+      {#if error}<p class="error-text">{error}</p>{/if}
+    </div>
+  {:else}
   <form onsubmit={save}>
     <div class="shots">
       {#each photos as p, i}
@@ -206,6 +343,14 @@
         <Icon name="sparkles" size={18} stroke={2} />
         <span>{ai === 'thinking' ? 'Looking at your photo…' : aiNote}</span>
         {#if ai === 'error' && photos[0]}<button type="button" class="btn small gray" onclick={() => identify(photos[0])}>Retry</button>{/if}
+      </div>
+    {/if}
+
+    {#if similar.length}
+      <div class="dupe">
+        <Icon name="copy" size={18} />
+        <span class="grow">Already in Storage: {#each similar as s, i}<a href={`/items/${s.number}`}>{s.name}</a><span class="muted"> in {s.box_name ?? s.location_name ?? 'no box'}</span>{i < similar.length - 1 ? ', ' : ''}{/each}</span>
+        <button type="button" class="x" aria-label="Dismiss" onclick={() => (similar = [])}><Icon name="x" size={14} stroke={2.6} /></button>
       </div>
     {/if}
 
@@ -238,12 +383,13 @@
 
     {#if error}<p class="error-text">{error}</p>{/if}
     <div class="savebar">
-      <button class="btn block" disabled={saving}>
-        <Icon name={printLabel ? 'printer' : 'check'} size={20} stroke={2.2} />
-        {saving ? 'Saving…' : printLabel ? 'Save and print' : 'Save'}
+      <button class="btn block morph" class:done={saved} disabled={saving}>
+        {#if saving}<span class="spinner"></span>{:else if saved}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path class="draw" d="M5 12.5 10 17.5 19 7" /></svg>{:else}<Icon name={printLabel ? 'printer' : 'check'} size={20} stroke={2.2} />{/if}
+        {saving ? 'Saving…' : saved ? 'Saved' : printLabel ? 'Save and print' : 'Save'}
       </button>
     </div>
   </form>
+  {/if}
 </div>
 
 <Sheet bind:open={picking} title="Where does it go?">
@@ -277,6 +423,25 @@
   .fields.shimmer { opacity: 0.6; }
   .name { font-size: 20px; font-weight: 600; }
   .more { margin-top: 6px; padding-left: 4px; }
+  .mode { margin-top: 14px; }
+  .boxmode { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .boxshot { position: relative; }
+  .boxshot img { width: 100%; max-height: 300px; object-fit: cover; border-radius: var(--r-tile); }
+  .retake { position: absolute; right: 10px; bottom: 10px; background: var(--glass-bg-strong); backdrop-filter: blur(16px); }
+  .draft .check { width: 26px; height: 26px; border-radius: 13px; border: 2px solid var(--label-3); background: transparent; display: grid; place-items: center; color: #fff; flex: none; cursor: pointer; transition: transform 0.4s var(--spring), background 0.2s; }
+  .draft .check.on { background: var(--tint); border-color: var(--tint); }
+  .draft.off .grow { opacity: 0.45; }
+  .dname-in { display: block; width: 100%; font-weight: 600; }
+  .dq { color: var(--label-2); }
+  .dupe { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; padding: 10px 12px 10px 14px; border-radius: 16px; font-size: 15px; background: color-mix(in srgb, var(--tint) 10%, var(--bg-2)); }
+  .dupe :global(svg) { color: var(--tint); flex: none; margin-top: 2px; }
+  .dupe .x { border: 0; background: transparent; color: var(--label-3); cursor: pointer; padding: 2px; }
+  .morph { transition: background 0.35s, transform 0.45s var(--spring), width 0.4s var(--spring); }
+  .morph.done { background: var(--green); }
+  .spinner { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid rgba(255,255,255,.35); border-top-color: #fff; animation: spin 0.7s linear infinite; }
+  .draw { stroke-dasharray: 24; stroke-dashoffset: 24; animation: draw 0.4s var(--ease) forwards; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
   .qty { width: 56px; text-align: center !important; flex: none !important; font-size: 18px; font-weight: 600; }
   .savebar { position: sticky; bottom: calc(var(--tabbar-h) + 10px); margin-top: 22px; z-index: 5; }
   .savebar .btn { box-shadow: 0 8px 24px color-mix(in srgb, var(--tint) 35%, transparent); }

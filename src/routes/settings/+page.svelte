@@ -13,6 +13,13 @@
   const admin = $derived(data.user?.role === 'admin');
   let qrBase = $state(data.qrBase);
   let testing = $state(false);
+  let theme = $state('light');
+  onMount(() => { try { theme = localStorage.getItem('theme') ?? 'light'; } catch {} });
+  function setTheme(t: string) {
+    theme = t;
+    document.documentElement.dataset.theme = t;
+    try { localStorage.setItem('theme', t); } catch {}
+  }
   onMount(prefetchRegistration);
 
   const saved = () => async ({ result, update }: { result: { type: string; data?: Record<string, unknown> }; update: (o?: { reset?: boolean }) => Promise<void> }) => {
@@ -58,6 +65,21 @@
     <form method="POST" action="/api/auth/logout"><button class="btn small gray">Sign out</button></form>
   </div>
 
+  <h3 class="group-label">Library</h3>
+  <div class="group">
+    <a class="row" href="/report"><Icon name="copy" size={20} /><span class="grow">Insurance report</span><span class="chev"><Icon name="chevron-right" size={16} stroke={2.4} /></span></a>
+    <a class="row" href="/checked-out"><Icon name="out" size={20} /><span class="grow">Checked out</span><span class="chev"><Icon name="chevron-right" size={16} stroke={2.4} /></span></a>
+    <a class="row" href="/trash"><Icon name="trash" size={20} /><span class="grow">Recently deleted</span>{#if data.trashCount}<span class="detail num">{data.trashCount}</span>{/if}<span class="chev"><Icon name="chevron-right" size={16} stroke={2.4} /></span></a>
+  </div>
+
+  <h3 class="group-label">Appearance</h3>
+  <div class="segmented appearance" role="group" aria-label="Appearance">
+    <button aria-pressed={theme === 'light'} onclick={() => setTheme('light')}>Light</button>
+    <button aria-pressed={theme === 'auto'} onclick={() => setTheme('auto')}>Automatic</button>
+    <button aria-pressed={theme === 'dark'} onclick={() => setTheme('dark')}>Dark</button>
+  </div>
+  <p class="group-foot">Saved on this device.</p>
+
   {#if admin}
     <h3 class="group-label" id="printer">Printer</h3>
     <form method="POST" action="?/printer" use:enhance={saved}>
@@ -81,6 +103,17 @@
       </div>
     </form>
     <p class="group-foot">{data.aiReady ? 'On. ' : ''}Uses Claude to name and describe items from a photo. Get a key at console.anthropic.com. Each photo costs a fraction of a cent. Leave blank and save to turn it off.</p>
+
+    <h3 class="group-label">Home Assistant</h3>
+    <form method="POST" action="?/ha" use:enhance={saved}>
+      <div class="group">
+        <div class="row"><span class="grow">Connection</span><span class="detail">{data.ha.connected ? 'Connected' : 'Not running inside Home Assistant'}</span></div>
+        <label class="row"><span class="lbl">Remind after</span><input name="overdue_days" type="number" min="1" max="365" value={data.ha.overdueDays} inputmode="numeric" /><span class="detail">days</span></label>
+        <label class="row"><span class="lbl">Phone</span><input name="notify" value={data.ha.notify} placeholder="notify.mobile_app_your_iphone" autocapitalize="none" /></label>
+        <button class="row action">Save</button>
+      </div>
+    </form>
+    <p class="group-foot">Storage publishes sensors (items, value, checked out, missing), answers “Where is the tent?” in Assist, and every evening reminds you about anything checked out longer than this. Add a phone’s notify service to get the reminder there too.</p>
 
     <h3 class="group-label">QR code address</h3>
     <form method="POST" action="?/qr" use:enhance={saved}>
@@ -160,5 +193,6 @@
   .codes { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--sep); margin-top: 12px; }
   .codes span { background: var(--bg-2); padding: 12px; text-align: center; font-family: var(--mono); }
   .about { text-align: center; margin-top: 36px; }
+  .appearance { margin: 0 2px; }
   .row :global(svg) { color: var(--tint); flex: none; }
 </style>

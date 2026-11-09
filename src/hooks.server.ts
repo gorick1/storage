@@ -2,9 +2,17 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import { issueSetupCode, sessionUser, setupOpen } from '$lib/server/auth';
 import { startQueue } from '$lib/server/printer';
 import { seedLabels } from '$lib/server/labels';
+import { purgeDeleted } from '$lib/server/records';
+import { removePhotoFiles } from '$lib/server/photos';
+import { startHomeAssistant } from '$lib/server/homeassistant';
 
 seedLabels();
 startQueue();
+startHomeAssistant();
+// Recently Deleted keeps items for 30 days.
+const purge = () => removePhotoFiles(purgeDeleted(Date.now() - 30 * 864e5)).catch(() => {});
+purge();
+setInterval(purge, 6 * 3600e3).unref?.();
 const setupCode = issueSetupCode();
 if (setupCode) console.log(`\n  Storage setup code: ${setupCode}\n  Enter it at /setup to create the admin account. A new code is printed each time the app starts.\n`);
 

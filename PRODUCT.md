@@ -52,6 +52,8 @@ Confirmed:
 ## Brand Commitments
 
 - Modern, Apple-native feel: "like an Apple engineer built this." Follow Apple's interface conventions (system font stack, inset grouped lists, large titles, sheets, translucent bars, SF Symbols-style iconography) as the standing design language.
+- Prefers light mode: the app opens in light; Automatic and Dark are opt-in in Settings.
+- Apple's Liquid Glass (iOS 26) design language for chrome: floating glass tab bar, sheets, menus and controls.
 - Chosen world: Apple Home / Shortcuts-style tiles. Locations and boxes browse as tappable tiles, each location carrying its own color.
 
 ## Evidence on Hand

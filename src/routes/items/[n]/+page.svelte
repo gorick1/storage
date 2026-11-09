@@ -8,6 +8,8 @@
   import History from '$lib/components/History.svelte';
   import DetailFields from '$lib/components/DetailFields.svelte';
   import { formatMoney, CONDITION_LABEL } from '$lib/money';
+  import { rememberView } from '$lib/client/actions.svelte';
+  import { onMount } from 'svelte';
   import { toast } from '$lib/client/toast.svelte';
   import { api } from '$lib/client/api';
   import { preparePhoto } from '$lib/client/image';
@@ -79,6 +81,8 @@
 
   const fmtDate = (t: number) => new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   const fmtDay = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  onMount(() => rememberView({ kind: 'item', number: data.item.number, name: data.item.name }));
 
   // While a price lookup runs on the server, refresh until it lands.
   $effect(() => {

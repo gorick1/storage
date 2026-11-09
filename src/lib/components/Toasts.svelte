@@ -41,16 +41,16 @@
 </div>
 
 <style>
-  .toasts { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--tabbar-h) + 12px); z-index: 100; display: flex; flex-direction: column; gap: 8px; width: min(440px, calc(100vw - 24px)); pointer-events: none; }
+  .toasts { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--tabbar-h) + 4px); z-index: 100; display: flex; flex-direction: column; gap: 8px; width: min(440px, calc(100vw - 24px)); pointer-events: none; }
   .toast {
-    pointer-events: auto; display: flex; align-items: center; gap: 10px; min-height: 50px; padding: 8px 8px 8px 16px; border-radius: 16px;
-    background: color-mix(in srgb, var(--bg-2) 86%, transparent); backdrop-filter: saturate(180%) blur(24px); -webkit-backdrop-filter: saturate(180%) blur(24px);
-    box-shadow: var(--shadow-lift); font-size: 15px; font-weight: 500; animation: rise 0.42s var(--ease);
+    pointer-events: auto; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 7px 7px 7px 16px; border-radius: 26px;
+    background: var(--glass-bg-strong); backdrop-filter: saturate(190%) blur(24px); -webkit-backdrop-filter: saturate(190%) blur(24px);
+    box-shadow: inset 0 1px 0 var(--glass-rim), inset 0 0 0 0.5px var(--glass-edge), var(--glass-shadow); font-size: 15px; font-weight: 500; animation: rise 0.55s var(--spring);
   }
   .toast.error .ic { color: var(--red); }
   .ic { color: var(--green); display: grid; }
   .txt { flex: 1; }
-  .act { border: 0; background: var(--fill); color: var(--tint); font-weight: 600; height: 34px; padding: 0 14px; border-radius: 17px; cursor: pointer; }
+  .act { border: 0; background: var(--tint); color: #fff; font-weight: 600; height: 38px; padding: 0 16px; border-radius: 19px; cursor: pointer; }
   .close { border: 0; background: transparent; color: var(--label-3); width: 34px; height: 34px; cursor: pointer; display: grid; place-items: center; }
   @keyframes rise { from { opacity: 0; transform: translateY(14px) scale(0.98); filter: blur(4px); } }
 </style>

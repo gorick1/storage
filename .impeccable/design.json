@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-09T01:26:07+00:00",
+  "generatedAt": "2026-11-09T05:26:20+00:00",
   "title": "Design System: Storage",
   "extensions": {
     "colorMeta": {
@@ -365,10 +365,95 @@
         ],
         "dark": "rgba(118, 118, 128, 0.36)"
       },
-      "bar-material": {
+      "glass-bg": {
         "role": "neutral",
-        "displayName": "Bar Material",
-        "canonical": "rgba(249, 249, 249, 0.82)",
+        "displayName": "Glass",
+        "canonical": "rgba(255, 255, 255, 0.58)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
+        ],
+        "purpose": "Standard floating material: tab capsule, search orb, sidebar, header capsules, jump chips, camera tools. Always with blur(24px) saturate(190%).",
+        "dark": "rgba(44, 44, 48, 0.56)"
+      },
+      "glass-bg-strong": {
+        "role": "neutral",
+        "displayName": "Glass Strong",
+        "canonical": "rgba(255, 255, 255, 0.82)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
+        ],
+        "purpose": "Denser glass behind reading text: toasts, print pill, context menu, multi-select bar.",
+        "dark": "rgba(44, 44, 48, 0.78)"
+      },
+      "glass-rim": {
+        "role": "neutral",
+        "displayName": "Glass Rim",
+        "canonical": "rgba(255, 255, 255, 0.9)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
+        ],
+        "purpose": "1px inset top highlight on every glass surface.",
+        "dark": "rgba(255, 255, 255, 0.14)"
+      },
+      "glass-edge": {
+        "role": "neutral",
+        "displayName": "Glass Edge",
+        "canonical": "rgba(0, 0, 0, 0.07)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
+        ],
+        "purpose": "0.5px inset outline on every glass surface.",
+        "dark": "rgba(255, 255, 255, 0.06)"
+      },
+      "glass-lens": {
+        "role": "neutral",
+        "displayName": "Glass Lens",
+        "canonical": "rgba(0, 0, 0, 0.06)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
+        ],
+        "purpose": "Sliding active-tab highlight; hover and pressed state inside glass; sheet header buttons.",
+        "dark": "rgba(255, 255, 255, 0.14)"
+      },
+      "sheet-scrim": {
+        "role": "neutral",
+        "displayName": "Sheet Scrim",
+        "canonical": "rgba(20, 20, 30, 0.22)",
         "tonalRamp": [
           "oklch(15% 0.003 286)",
           "oklch(27% 0.003 286)",
@@ -379,7 +464,23 @@
           "oklch(85% 0.003 286)",
           "oklch(95% 0.003 286)"
         ],
-        "dark": "rgba(22, 22, 24, 0.8)"
+        "purpose": "Backdrop behind a sheet."
+      },
+      "menu-scrim": {
+        "role": "neutral",
+        "displayName": "Menu Scrim",
+        "canonical": "rgba(240, 240, 245, 0.35)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "purpose": "Backdrop behind a context menu, with blur(14px)."
       },
       "thermal-black": {
         "role": "neutral",
@@ -419,7 +520,11 @@
       },
       "hero-title": {
         "displayName": "Hero Title",
-        "purpose": "Record name inside location and box heroes (items use 26px)."
+        "purpose": "Record name inside location and box heroes."
+      },
+      "hero-title-item": {
+        "displayName": "Item Hero Title",
+        "purpose": "Record name on the item record, one step below the hero title."
       },
       "title-2": {
         "displayName": "Title 2",
@@ -435,11 +540,15 @@
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Rows, fields, back links."
+        "purpose": "Rows and fields."
       },
       "headline": {
         "displayName": "Headline",
         "purpose": "Buttons, bar titles, emphasized row text."
+      },
+      "callout": {
+        "displayName": "Callout",
+        "purpose": "Glass capsule labels (header back link), context menu items, sidebar links, box tile names."
       },
       "subhead": {
         "displayName": "Subhead",
@@ -453,9 +562,13 @@
         "displayName": "Caption",
         "purpose": "Badges and codes inside tiles."
       },
+      "caption-2": {
+        "displayName": "Caption 2",
+        "purpose": "Labels under the multi-select bar action glyphs."
+      },
       "tab-label": {
         "displayName": "Tab Label",
-        "purpose": "Tab bar labels only."
+        "purpose": "Tab bar labels only; collapse away when the bar compacts."
       },
       "code": {
         "displayName": "Code",
@@ -473,7 +586,7 @@
         "name": "shadow-lift",
         "value": "0 2px 6px rgba(0, 0, 0, 0.08), 0 18px 40px rgba(0, 0, 0, 0.12)",
         "dark": "0 2px 8px rgba(0, 0, 0, 0.5), 0 20px 44px rgba(0, 0, 0, 0.5)",
-        "purpose": "Tile hover on pointer devices and floating toasts."
+        "purpose": "Tile hover on pointer devices."
       },
       {
         "name": "tile-gloss",
@@ -486,36 +599,82 @@
         "purpose": "Selected segment and switch thumb."
       },
       {
-        "name": "bar-material",
-        "value": "backdrop-filter: saturate(180%) blur(20px)",
-        "purpose": "Scrolled nav bar and tab bar; toasts use blur(24px)."
+        "name": "glass",
+        "value": "inset 0 1px 0 var(--glass-rim), inset 0 0 0 0.5px var(--glass-edge), var(--glass-shadow)",
+        "purpose": "Every glass surface; paired with backdrop-filter: blur(24px) saturate(190%)."
+      },
+      {
+        "name": "glass-shadow",
+        "value": "0 10px 34px rgba(30, 30, 60, 0.13), 0 1px 3px rgba(0, 0, 0, 0.06)",
+        "dark": "0 10px 34px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.4)",
+        "purpose": "Drop shadow component of the glass stack."
+      },
+      {
+        "name": "sheet",
+        "value": "inset 0 1px 0 var(--glass-rim), inset 0 0 0 0.5px var(--glass-edge), 0 24px 60px rgba(0, 0, 0, 0.22)",
+        "purpose": "Floating sheet, over blur(30px) saturate(190%)."
+      },
+      {
+        "name": "context-lift",
+        "value": "filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.18)); transform: scale(1.03)",
+        "purpose": "The pressed item while its context menu is open."
+      },
+      {
+        "name": "scroll-edge",
+        "value": "linear-gradient(to bottom, color-mix(in srgb, var(--bg) 88%, transparent), transparent) + backdrop-filter: blur(10px), masked #000 55% to transparent",
+        "purpose": "Header scroll edge in place of a bar slab; appears once content scrolls under."
       }
     ],
     "motion": [
       {
+        "name": "spring",
+        "value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "purpose": "iOS-style spring with slight overshoot: press release, sheets, the tab lens, the dock, pills, menus, toasts, swipe snap-back."
+      },
+      {
         "name": "ease",
         "value": "cubic-bezier(0.22, 1, 0.36, 1)",
-        "purpose": "The one spring-like ease for presses, sheets, toasts, bar titles and view transitions."
+        "purpose": "Non-overshooting ease for the header small title, switch thumb, scan reticle and drawn checks."
       },
       {
         "name": "press",
-        "value": "transform 0.15s; scale(0.97) buttons, scale(0.96) location tiles",
-        "purpose": "Press feedback."
+        "value": "scale(0.96) opacity 0.88 in 0.08s; release 0.45s var(--spring)",
+        "purpose": "Buttons and tiles; icon buttons, orb and select-bar actions press to scale(0.9)."
       },
       {
-        "name": "view-transition",
-        "value": "0.42s cubic-bezier(0.22, 1, 0.36, 1)",
-        "purpose": "Tile-to-record morph via matching loc-N / box-N / item-N names; scan reticle into hero."
+        "name": "tab-lens",
+        "value": "transform 0.55s var(--spring)",
+        "purpose": "Lens highlight slides to the active tab."
+      },
+      {
+        "name": "dock-compact",
+        "value": "height and border-radius 0.45s var(--spring); 64px to 52px after 80px of downward scroll",
+        "purpose": "Tab bar and search orb compact while scrolling down, restore on the way up."
       },
       {
         "name": "sheet-rise",
-        "value": "0.45s translateY(40%) to 0 with fade",
+        "value": "0.55s var(--spring) from translateY(30%) scale(0.96), opacity 0",
         "purpose": "Sheet entrance; backdrop fades over 0.3s."
       },
       {
         "name": "toast-rise",
-        "value": "0.42s translateY(14px) scale(0.98) blur(4px) to rest",
+        "value": "0.55s var(--spring) from translateY(14px) scale(0.98) blur(4px)",
         "purpose": "Toast entrance."
+      },
+      {
+        "name": "menu-pop",
+        "value": "0.45s var(--spring) from scale(0.6), opacity 0",
+        "purpose": "Context menu entrance from its anchor corner."
+      },
+      {
+        "name": "pill-drop",
+        "value": "0.6s var(--spring) from translateY(-24px) scale(0.6)",
+        "purpose": "Print pill entrance."
+      },
+      {
+        "name": "view-transition",
+        "value": "browser default view transition via document.startViewTransition",
+        "purpose": "Tile-to-record morph via matching loc-N / box-N / item-N names; scan reticle into hero."
       },
       {
         "name": "reduced-motion",
@@ -540,16 +699,28 @@
         "name": "tiles-4up",
         "value": "1100px"
       }
-    ]
+    ],
+    "themes": {
+      "attribute": "html[data-theme]",
+      "values": [
+        "light",
+        "auto",
+        "dark"
+      ],
+      "default": "light",
+      "storage": "localStorage 'theme'",
+      "dark-applies": "[data-theme='dark'], or [data-theme='auto'] under prefers-color-scheme: dark",
+      "control": "Settings > Appearance segmented control (Light, Automatic, Dark)"
+    }
   },
   "components": [
     {
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Filled tint action; presses down rather than lighting up.",
+      "description": "Filled tint action; presses down and springs back.",
       "html": "<button class=\"ds-btn\">Save Item</button>",
-      "css": ".ds-btn{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:14px;border:0;background:var(--tint,#007aff);color:#fff;font-weight:600;font-size:17px;letter-spacing:-0.01em;cursor:pointer;transition:transform .15s cubic-bezier(0.22, 1, 0.36, 1),opacity .15s}.ds-btn:active{transform:scale(.97);opacity:.85}.ds-btn:focus-visible{outline:3px solid color-mix(in srgb,var(--tint,#007aff) 55%,transparent);outline-offset:2px}.ds-btn:disabled{opacity:.4}"
+      "css": ".ds-btn{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:14px;border:0;background:var(--tint,#007aff);color:#fff;font-weight:600;font-size:17px;letter-spacing:-0.01em;cursor:pointer;transition:transform .45s cubic-bezier(0.34,1.56,0.64,1),opacity .2s}.ds-btn:active{transform:scale(.96);opacity:.88;transition-duration:.08s}.ds-btn:focus-visible{outline:3px solid color-mix(in srgb,var(--tint,#007aff) 55%,transparent);outline-offset:2px}.ds-btn:disabled{opacity:.4}"
     },
     {
       "name": "Gray Button",
@@ -557,7 +728,7 @@
       "refersTo": "button-gray",
       "description": "Secondary action on a translucent gray fill with tint text.",
       "html": "<button class=\"ds-btn-gray\">Move</button>",
-      "css": ".ds-btn-gray{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;height:50px;padding:0 20px;border-radius:14px;border:0;background:var(--fill,rgba(120,120,128,.12));color:var(--tint,#007aff);font-weight:600;font-size:17px;cursor:pointer;transition:transform .15s cubic-bezier(0.22, 1, 0.36, 1),opacity .15s}.ds-btn-gray:active{transform:scale(.97);opacity:.85}.ds-btn-gray:focus-visible{outline:3px solid color-mix(in srgb,var(--tint,#007aff) 55%,transparent);outline-offset:2px}"
+      "css": ".ds-btn-gray{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;height:50px;padding:0 20px;border-radius:14px;border:0;background:var(--fill,rgba(120,120,128,.12));color:var(--tint,#007aff);font-weight:600;font-size:17px;cursor:pointer;transition:transform .45s cubic-bezier(0.34,1.56,0.64,1),opacity .2s}.ds-btn-gray:active{transform:scale(.96);opacity:.88;transition-duration:.08s}.ds-btn-gray:focus-visible{outline:3px solid color-mix(in srgb,var(--tint,#007aff) 55%,transparent);outline-offset:2px}"
     },
     {
       "name": "Location Tile",
@@ -603,16 +774,32 @@
       "name": "Tab Bar",
       "kind": "nav",
       "refersTo": "tab-bar",
-      "description": "Translucent material tab bar with the prominent center Scan capsule.",
-      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab on\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20\"/></svg></span>Home</a><a class=\"ds-tab\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.3 15.3 20 20\"/></svg></span>Search</a><a class=\"ds-tab ds-tab-p\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M4 12h16\"/></svg></span>Scan</a><a class=\"ds-tab\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1.4 1.4 0 0 1 0 2l-6.7 6.7a1.4 1.4 0 0 1-2 0zM8 8h.01\"/></svg></span>Labels</a></nav>",
-      "css": ".ds-tabs{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:grid;grid-template-columns:repeat(4,1fr);width:360px;height:56px;background:rgba(249,249,249,.82);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid rgba(60,60,67,.18)}.ds-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:rgba(60,60,67,.62);font-size:10px;font-weight:500;letter-spacing:.01em;text-decoration:none}.ds-tab.on,.ds-tab:hover{color:#007aff}.ds-tab:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:-3px}.ds-tab-i{display:grid;place-items:center;height:28px}.ds-tab-p .ds-tab-i{width:46px;height:32px;border-radius:16px;background:#007aff;color:#fff;margin-top:-2px}"
+      "description": "Floating Liquid Glass capsule of four tabs with a sliding lens, plus a separate glass search orb; compacts while scrolling.",
+      "html": "<div class=\"ds-dock\"><nav class=\"ds-tabs\"><span class=\"ds-lens\"></span><a class=\"ds-tab on\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20\"/></svg></span>Home</a><a class=\"ds-tab ds-tab-p\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M4 12h16\"/></svg></span>Scan</a><a class=\"ds-tab\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1.4 1.4 0 0 1 0 2l-6.7 6.7a1.4 1.4 0 0 1-2 0zM8 8h.01\"/></svg></span>Labels</a><a class=\"ds-tab\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1\"/></svg></span>Settings</a></nav><a class=\"ds-orb\" href=\"#\" aria-label=\"Search\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.3 15.3 20 20\"/></svg></a></div>",
+      "css": ".ds-dock{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:flex;gap:10px;align-items:center;width:380px}.ds-tabs{position:relative;flex:1;display:grid;grid-template-columns:repeat(4,1fr);height:64px;padding:5px;border-radius:32px;background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(24px) saturate(190%);backdrop-filter:blur(24px) saturate(190%);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(0,0,0,.07),0 10px 34px rgba(30,30,60,.13),0 1px 3px rgba(0,0,0,.06);transition:height .45s cubic-bezier(0.34,1.56,0.64,1),border-radius .45s cubic-bezier(0.34,1.56,0.64,1)}.ds-lens{position:absolute;top:5px;bottom:5px;left:5px;width:calc((100% - 10px)/4);border-radius:27px;background:rgba(0,0,0,.06);transition:transform .55s cubic-bezier(0.34,1.56,0.64,1)}.ds-tab{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#000;font-size:10.5px;font-weight:600;letter-spacing:.01em;text-decoration:none;border-radius:27px}.ds-tab.on{color:#007aff}.ds-tab:focus-visible,.ds-orb:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:2px}.ds-tab-i{display:grid;place-items:center;height:28px;transition:transform .45s cubic-bezier(0.34,1.56,0.64,1)}.ds-tab:active .ds-tab-i{transform:scale(.88);transition-duration:.08s}.ds-tab-p .ds-tab-i{width:44px;height:30px;border-radius:15px;background:#007aff;color:#fff}.ds-orb{width:64px;height:64px;border-radius:32px;flex:none;display:grid;place-items:center;color:#000;background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(24px) saturate(190%);backdrop-filter:blur(24px) saturate(190%);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(0,0,0,.07),0 10px 34px rgba(30,30,60,.13),0 1px 3px rgba(0,0,0,.06);transition:transform .45s cubic-bezier(0.34,1.56,0.64,1)}.ds-orb:hover{color:#007aff}.ds-orb:active{transform:scale(.9)}"
     },
     {
       "name": "Toast",
       "kind": "custom",
-      "description": "Floating material toast with status glyph and pill action; follows print jobs live.",
+      "description": "Glass-strong capsule above the dock with a status glyph and tint action; follows print jobs live.",
       "html": "<div class=\"ds-toast\"><span class=\"ds-toast-ic\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12.5 10 17.5 19 7\"/></svg></span><span class=\"ds-toast-t\">Label printed</span><button class=\"ds-toast-a\">Undo</button></div>",
-      "css": ".ds-toast{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:flex;align-items:center;gap:10px;width:340px;min-height:50px;padding:8px 8px 8px 16px;border-radius:16px;background:color-mix(in srgb,#fff 86%,transparent);backdrop-filter:saturate(180%) blur(24px);box-shadow:0 2px 6px rgba(0,0,0,.08),0 18px 40px rgba(0,0,0,.12);font-size:15px;font-weight:500}.ds-toast-ic{color:#34c759;display:grid}.ds-toast-t{flex:1}.ds-toast-a{border:0;background:rgba(120,120,128,.12);color:#007aff;font:inherit;font-weight:600;height:34px;padding:0 14px;border-radius:17px;cursor:pointer}.ds-toast-a:active{opacity:.7}.ds-toast-a:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:2px}"
+      "css": ".ds-toast{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:flex;align-items:center;gap:10px;width:340px;min-height:52px;padding:7px 7px 7px 16px;border-radius:26px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(24px) saturate(190%);backdrop-filter:blur(24px) saturate(190%);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(0,0,0,.07),0 10px 34px rgba(30,30,60,.13),0 1px 3px rgba(0,0,0,.06);font-size:15px;font-weight:500;animation:ds-rise .55s cubic-bezier(0.34,1.56,0.64,1)}.ds-toast-ic{color:#34c759;display:grid}.ds-toast-t{flex:1}.ds-toast-a{border:0;background:#007aff;color:#fff;font:inherit;font-weight:600;height:38px;padding:0 16px;border-radius:19px;cursor:pointer}.ds-toast-a:active{opacity:.8}.ds-toast-a:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:2px}@keyframes ds-rise{from{opacity:0;transform:translateY(14px) scale(.98);filter:blur(4px)}}"
+    },
+    {
+      "name": "Glass Header Capsules",
+      "kind": "nav",
+      "refersTo": "glass-capsule",
+      "description": "Back and action capsules that float as glass in the header; no bar slab behind them.",
+      "html": "<div class=\"ds-hdr\"><a class=\"ds-back\" href=\"#\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 5l-7 7 7 7\"/></svg><span>Garage</span></a><button class=\"ds-act\">Edit</button></div>",
+      "css": ".ds-hdr{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:flex;justify-content:space-between;align-items:center;width:340px;padding:8px 12px;background:#f2f2f7}.ds-back{display:flex;align-items:center;height:40px;padding:0 14px 0 6px;border-radius:20px;color:#007aff;font-size:16px;font-weight:500;text-decoration:none;background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(24px) saturate(190%);backdrop-filter:blur(24px) saturate(190%);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(0,0,0,.07),0 10px 34px rgba(30,30,60,.13),0 1px 3px rgba(0,0,0,.06);transition:transform .45s cubic-bezier(0.34,1.56,0.64,1)}.ds-back:active{transform:scale(.94);transition-duration:.08s}.ds-act{border:0;height:40px;padding:0 16px;border-radius:20px;color:#007aff;font:inherit;font-size:17px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(24px) saturate(190%);backdrop-filter:blur(24px) saturate(190%);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(0,0,0,.07),0 10px 34px rgba(30,30,60,.13),0 1px 3px rgba(0,0,0,.06);transition:transform .45s cubic-bezier(0.34,1.56,0.64,1)}.ds-act:active{transform:scale(.94);transition-duration:.08s}.ds-back:focus-visible,.ds-act:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:2px}"
+    },
+    {
+      "name": "Context Menu",
+      "kind": "custom",
+      "refersTo": "context-menu",
+      "description": "Long-press glass menu that pops on the spring over a blurred scrim.",
+      "html": "<div class=\"ds-cm\" role=\"menu\"><button>Move<span>&#8594;</span></button><button>Check Out<span>&#8599;</span></button><button class=\"ds-cm-d\">Delete</button></div>",
+      "css": ".ds-cm{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;width:220px;border-radius:22px;padding:6px;display:flex;flex-direction:column;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(24px) saturate(190%);backdrop-filter:blur(24px) saturate(190%);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(0,0,0,.07),0 10px 34px rgba(30,30,60,.13),0 1px 3px rgba(0,0,0,.06);transform-origin:top left;animation:ds-pop .45s cubic-bezier(0.34,1.56,0.64,1)}.ds-cm button{display:flex;align-items:center;justify-content:space-between;gap:12px;height:44px;padding:0 14px;border:0;border-radius:15px;background:transparent;color:#000;font:inherit;font-size:16px;text-align:left;cursor:pointer}.ds-cm button:hover,.ds-cm button:active{background:rgba(0,0,0,.06)}.ds-cm button:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:-3px}.ds-cm-d{color:#ff3b30!important}@keyframes ds-pop{from{transform:scale(.6);opacity:0}}"
     },
     {
       "name": "Label Preview",
@@ -625,14 +812,15 @@
   ],
   "narrative": {
     "northStar": "The Household Home App",
-    "overview": "Storage speaks Apple's system grammar as its native tongue: the SF Pro stack, large titles that hand off to a translucent bar, inset grouped lists on grouped-gray, and sheets that rise from the bottom edge. Nothing is invented where iOS already has an answer; the app should feel like a first-party utility a household found already installed.\n\nThe one voice the system adds is place color. Every location owns a single system color, and that color follows the place everywhere it appears: its tile, the dot beside each box and item it holds, the tint behind a box's cover, the hero of the box's record. Colored tiles are the browsing surface; the grouped list is the reading surface. Density is phone-first and one-handed, with 44px minimum targets throughout.\n\nLight and dark follow the device; every token has a dark counterpart and nothing is designed for one mode only. Motion is short and springy, and its signature is continuity: a tile does not link to a page, it becomes the page.",
+    "overview": "Storage speaks Apple's system grammar as its native tongue, in its iOS 26 Liquid Glass dialect: the SF Pro stack, large titles over a blurred scroll edge, inset grouped lists on grouped-gray, and controls that float above content as glass capsules. Nothing is invented where iOS already has an answer; the app should feel like a first-party utility a household found already installed.\n\nThe one voice the system adds is place color. Every location owns a single system color, and that color follows the place everywhere it appears: its tile, the dot beside each box and item it holds, the tint behind a box's cover, the hero of the box's record. Colored tiles are the browsing surface; the grouped list is the reading surface; glass is the control layer that floats over both. Density is phone-first and one-handed, with 44px minimum targets throughout.\n\nLight is the default appearance. The root carries `data-theme` as `light`, `auto` or `dark`, chosen in Settings under Appearance and kept in localStorage; dark tokens apply under `dark`, and under the device's dark preference only when the theme is `auto`. Every token still has a dark counterpart and nothing is designed for one mode only. Motion is springy in the iOS sense, overshooting slightly on release, and its signature is continuity: a tile does not link to a page, it becomes the page.",
     "keyCharacteristics": [
       "System SF Pro stack only; no web fonts.",
       "One system color per place, carried from tile to record.",
       "Filled color surfaces use the deepened `--loc-solid`; tints use the raw `--loc`.",
       "Inset grouped lists with hairline separators for reading and editing.",
-      "Translucent, blurred bars and toasts; opaque sheets over a dim scrim.",
-      "Large-title and hero headers whose bar title appears only on scroll.",
+      "Liquid Glass for every floating control: tab capsule, search orb, header capsules, sheets, toasts, menus, pills.",
+      "Light by default, with Automatic and Dark as user choices.",
+      "One spring curve for press-and-release, sheets, the tab lens and pills.",
       "View transitions morph a tile into its record.",
       "The label preview is strictly black on white, because it is a print proof."
     ],
@@ -653,6 +841,11 @@
         "section": "colors"
       },
       {
+        "name": "The Light First Rule",
+        "body": "Light is the default theme. Dark applies only when the user picks Dark, or picks Automatic on a device set to dark; every new color is still defined for both.",
+        "section": "colors"
+      },
+      {
         "name": "The System Face Rule",
         "body": "Only the system stack renders UI text. The label preview's Helvetica Neue condensed rendering exists solely to match the printer's font and never leaks into the app chrome.",
         "section": "typography"
@@ -663,8 +856,13 @@
         "section": "typography"
       },
       {
-        "name": "The Material Bar Rule",
-        "body": "Bars are clear at rest under a large title and become `bar-material` with blur and a hairline only once content scrolls beneath them. The tab bar is always material.",
+        "name": "The Glass Layer Rule",
+        "body": "Glass is for controls that float over content (navigation, header capsules, sheets, toasts, menus, pills, action bars). Content itself (tiles, groups, cards, rows) stays opaque and never turns to glass.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Scroll Edge Rule",
+        "body": "Headers have no bar slab. Back and action capsules float as glass at all times; once content scrolls under, a 10px-blurred gradient of the page color, masked to fade out, softens what sits beneath them.",
         "section": "elevation"
       }
     ],
@@ -674,8 +872,10 @@
       "**Do** give yellow its light fill with `yellow-ink` (#2e2300) text and a 10% black glyph wash.",
       "**Do** read and edit in inset grouped lists: 44px rows, 0.5px inset separators, 13px uppercase group labels.",
       "**Do** make tiles that open records carry a `view-transition-name` matching the record's hero.",
-      "**Do** keep bars clear at rest and material (82% plus `saturate(180%) blur(20px)`) once content scrolls under.",
-      "**Do** define every new color for both light and dark mode.",
+      "**Do** build floating controls from the glass material: `glass-bg` (or `glass-bg-strong` behind reading text), `blur(24px) saturate(190%)`, rim, edge and glass shadow.",
+      "**Do** round glass capsules at half their height on the capsule scale (19, 20, 24, 26, 27, 30, 32px) and sheets at 34px.",
+      "**Do** animate press-and-release, sheets, the tab lens, pills and menus on `--spring` (`cubic-bezier(0.34, 1.56, 0.64, 1)`); press in fast (0.08s) and release on the spring.",
+      "**Do** ship light as the default and define every new color for both light and dark.",
       "**Do** keep the label preview strictly #000 on #fff so it matches thermal print."
     ],
     "donts": [
@@ -683,7 +883,9 @@
       "**Don't** use place color for actions, or tint blue for place identity.",
       "**Don't** load a web font or substitute a non-system display face in the app chrome.",
       "**Don't** add color, gray, or tint to the label preview's ink or stock; editing chrome stays outside the printed marks.",
-      "**Don't** build dashboards of tables and gray cards for browsing; places and boxes browse as tiles."
+      "**Don't** build dashboards of tables and gray cards for browsing; places and boxes browse as tiles.",
+      "**Don't** put a solid bar behind the header or the tab bar; controls float as glass and the scroll edge blurs.",
+      "**Don't** turn content (tiles, groups, cards, rows) into glass."
     ]
   }
 }

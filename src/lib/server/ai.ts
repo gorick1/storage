@@ -57,6 +57,42 @@ export async function identify(imageBase64: string, mediaType: 'image/jpeg' | 'i
   return response.parsed_output;
 }
 
+/* ---------- Whole-box capture ---------- */
+
+const BoxContents = z.object({
+  items: z.array(z.object({
+    name: z.string().describe('Short, specific name a person would search for'),
+    brand: z.string().describe('Brand if printed and legible on the item; empty string otherwise'),
+    model: z.string().describe('Model if legible; empty string otherwise'),
+    category: z.string().describe('Broad household category in Title Case'),
+    quantity: z.number().int().describe('How many identical units are visible'),
+    description: z.string().describe('One short factual sentence')
+  })).describe('Every distinct item visible, largest or most valuable first. Group identical units into one entry with a quantity.')
+});
+export type BoxContents = z.infer<typeof BoxContents>;
+
+export async function identifyMany(imageBase64: string, mediaType: 'image/jpeg' | 'image/png' | 'image/webp'): Promise<BoxContents> {
+  const key = apiKey();
+  if (!key) throw new Error('Add your Anthropic API key in Settings to use photo suggestions.');
+  const client = new Anthropic({ apiKey: key, timeout: 60_000, maxRetries: 1 });
+  const response = await client.messages.parse(
+    {
+      model: 'claude-opus-5-5',
+      max_tokens: 8000,
+      output_config: { effort: 'low', format: zodOutputFormat(BoxContents) },
+      fallbacks: 'default',
+      system:
+        'You catalog household storage. The photo shows the open contents of one storage box or shelf. List each distinct item so a person can find it later. ' +
+        'Never invent brands or model numbers you cannot read. Skip packing material, the box itself, and anything unidentifiable. At most 30 items.',
+      messages: [{ role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: mediaType, data: imageBase64 } }, { type: 'text', text: 'List the items in this box.' }] }]
+    },
+    { headers: { 'anthropic-beta': 'server-side-fallback-2026-07-01' } }
+  );
+  if (response.stop_reason === 'refusal') throw new Error('The AI declined this photo.');
+  if (!response.parsed_output) throw new Error('The AI reply could not be read. Try another photo.');
+  return { items: response.parsed_output.items.slice(0, 30) };
+}
+
 /* ---------- MSRP lookup ---------- */
 
 export interface PriceResult {

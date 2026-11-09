@@ -5,9 +5,14 @@
   import BoxTile from '$lib/components/BoxTile.svelte';
   import ItemRow from '$lib/components/ItemRow.svelte';
   import Icon from '$lib/components/Icon.svelte';
-
+  import { onMount } from 'svelte';
+  import { recentViews, type Recent } from '$lib/client/actions.svelte';
+  
   let { data } = $props();
   let q = $state('');
+  let recent = $state<Recent[]>([]);
+  onMount(() => (recent = recentViews().slice(0, 8)));
+  const KIND_ICON = { item: 'photo', box: 'box', location: 'house' } as const;
 </script>
 
 <svelte:head><title>Storage</title></svelte:head>
@@ -25,11 +30,28 @@
     {/snippet}
   </PageHeader>
 
-  {#if data.checkedOut || data.unplaced || data.homeless}
+  {#if data.checkedOut || data.unplaced || data.homeless || data.missing}
     <div class="chips">
+      {#if data.missing}<a class="chip" href="/search?filter=missing" data-color="red"><Icon name="warning" size={16} stroke={2.2} /> <span class="num">{data.missing}</span> missing</a>{/if}
       {#if data.checkedOut}<a class="chip" href="/checked-out" data-color="orange"><Icon name="out" size={16} stroke={2.2} /> <span class="num">{data.checkedOut}</span> checked out</a>{/if}
       {#if data.unplaced}<a class="chip" href="/search?filter=unplaced" data-color="red"><Icon name="tray" size={16} stroke={2.2} /> <span class="num">{data.unplaced}</span> not put away</a>{/if}
       {#if data.homeless}<a class="chip" href="/search?filter=homeless" data-color="indigo"><Icon name="box" size={16} stroke={2.2} /> <span class="num">{data.homeless}</span> boxes without a place</a>{/if}
+    </div>
+  {/if}
+
+  {#if data.pinned.length}
+    <div class="section-head"><h2>Pinned</h2></div>
+    <div class="rail">{#each data.pinned as box (box.id)}<BoxTile {box} compact />{/each}</div>
+  {/if}
+
+  {#if recent.length}
+    <div class="section-head"><h2>Jump Back In</h2></div>
+    <div class="jump">
+      {#each recent as r (r.kind + r.number)}
+        <a class="jump-chip glass" href={r.kind === 'item' ? `/items/${r.number}` : r.kind === 'box' ? `/boxes/${r.number}` : `/locations/${r.number}`}>
+          <Icon name={KIND_ICON[r.kind]} size={16} stroke={2.1} /><span>{r.name}</span>
+        </a>
+      {/each}
     </div>
   {/if}
 
@@ -80,6 +102,11 @@
   .chips { display: flex; gap: 8px; overflow-x: auto; margin: 14px -16px 0; padding: 0 16px 2px; scrollbar-width: none; }
   .chip { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px; border-radius: 17px; white-space: nowrap; font-size: 15px; font-weight: 500;
     background: color-mix(in srgb, var(--loc) 15%, var(--bg-2)); color: color-mix(in srgb, var(--loc) 50%, var(--label)); }
+  .jump { display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 8px; scrollbar-width: none; }
+  .jump-chip { display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 16px 0 13px; border-radius: 20px; white-space: nowrap; color: var(--label); font-size: 15px; font-weight: 500; flex: none; transition: transform 0.45s var(--spring); }
+  .jump-chip :global(svg) { color: var(--tint); }
+  .jump-chip:active { transform: scale(0.94); }
+  @media (min-width: 900px) { .jump { margin: 0; padding: 2px 0 8px; } }
   .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   @media (min-width: 640px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (min-width: 1100px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

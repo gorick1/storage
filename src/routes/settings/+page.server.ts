@@ -2,6 +2,8 @@ import { fail } from '@sveltejs/kit';
 import { getSetting, setSetting } from '$lib/server/db';
 import { createInvite, deleteUser, issueRecoveryCodes, listPasskeys, listUsers, removePasskey } from '$lib/server/auth';
 import { aiConfigured } from '$lib/server/ai';
+import { haAvailable, pushSensors } from '$lib/server/homeassistant';
+import { deletedItems } from '$lib/server/records';
 
 export const load = ({ locals, url }) => {
   const key = getSetting('anthropic_api_key');
@@ -13,7 +15,9 @@ export const load = ({ locals, url }) => {
     aiKeyHint: key ? `•••• ${key.slice(-4)}` : process.env.ANTHROPIC_API_KEY ? 'From add-on options' : '',
     aiReady: aiConfigured(),
     users: locals.user!.role === 'admin' ? listUsers() : [],
-    passkeys: listPasskeys(locals.user!.id)
+    passkeys: listPasskeys(locals.user!.id),
+    ha: { connected: haAvailable(), notify: getSetting('ha_notify_service'), overdueDays: getSetting('overdue_days', '14') },
+    trashCount: deletedItems().length
   };
 };
 
@@ -54,6 +58,16 @@ export const actions = {
     if (id === locals.user!.id) return fail(400, { error: 'You can’t remove yourself.' });
     deleteUser(id);
     return { saved: 'users' };
+  },
+  ha: async ({ request, locals }) => {
+    const deny = adminOnly(locals.user!.role); if (deny) return deny;
+    const f = await request.formData();
+    const notify = String(f.get('notify') ?? '').trim();
+    if (notify && !/^notify\.[a-z0-9_]+$/.test(notify)) return fail(400, { error: 'Use the full service name, like notify.mobile_app_garretts_iphone' });
+    setSetting('ha_notify_service', notify);
+    setSetting('overdue_days', String(Math.min(365, Math.max(1, Number(f.get('overdue_days')) || 14))));
+    pushSensors().catch(() => {});
+    return { saved: 'ha' };
   },
   codes: async ({ locals }) => ({ codes: issueRecoveryCodes(locals.user!.id) }),
   removePasskey: async ({ request, locals }) => {

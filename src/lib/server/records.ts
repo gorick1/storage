@@ -2,7 +2,7 @@ import { db, now, tx } from './db';
 import type { Kind } from '$lib/codes';
 
 export interface Location { id: number; number: number; name: string; color: string; icon: string; notes: string; sort: number; box_count?: number; item_count?: number; last_label_stock_id: number | null }
-export interface Box { id: number; number: number; name: string; location_id: number | null; notes: string; photo: string | null; item_count?: number; location_name?: string | null; location_color?: string | null; cover?: string | null; last_label_stock_id: number | null; updated_at: number }
+export interface Box { id: number; number: number; name: string; location_id: number | null; notes: string; photo: string | null; pinned: number; item_count?: number; location_name?: string | null; location_color?: string | null; cover?: string | null; last_label_stock_id: number | null; updated_at: number }
 export interface Item {
   id: number; number: number; name: string; description: string; tags: string; keywords: string; notes: string;
   quantity: number; track_quantity: number; box_id: number | null; location_id: number | null;
@@ -12,6 +12,7 @@ export interface Item {
   purchase_price_cents: number | null; purchase_date: string | null;
   msrp_cents: number | null; msrp_source_url: string | null; msrp_source_name: string | null; msrp_note: string | null; msrp_checked_at: number | null;
   price_status: 'none' | 'pending' | 'found' | 'not_found' | 'error';
+  deleted_at: number | null; missing_at: number | null;
   created_at: number; updated_at: number;
   cover?: string | null; box_name?: string | null; box_number?: number | null; location_name?: string | null; location_color?: string | null; checked_out_name?: string | null;
 }
@@ -37,7 +38,7 @@ export function listLocations(): Location[] {
   return db.prepare(`
     SELECT l.*,
       (SELECT COUNT(*) FROM boxes b WHERE b.location_id = l.id) AS box_count,
-      (SELECT COUNT(*) FROM items i LEFT JOIN boxes b ON b.id = i.box_id WHERE COALESCE(b.location_id, i.location_id) = l.id) AS item_count
+      (SELECT COUNT(*) FROM live_items i LEFT JOIN boxes b ON b.id = i.box_id WHERE COALESCE(b.location_id, i.location_id) = l.id) AS item_count
     FROM locations l ORDER BY l.sort, l.name COLLATE NOCASE`).all() as unknown as Location[];
 }
 
@@ -78,8 +79,8 @@ export function deleteLocation(id: number, userId: number | null) {
 
 const BOX_SELECT = `
   SELECT b.*, l.name AS location_name, l.color AS location_color,
-    (SELECT COUNT(*) FROM items i WHERE i.box_id = b.id) AS item_count,
-    COALESCE(b.photo, (SELECT p.file FROM photos p JOIN items i ON i.id = p.item_id WHERE i.box_id = b.id ORDER BY i.updated_at DESC, p.sort LIMIT 1)) AS cover
+    (SELECT COUNT(*) FROM live_items i WHERE i.box_id = b.id) AS item_count,
+    COALESCE(b.photo, (SELECT p.file FROM photos p JOIN live_items i ON i.id = p.item_id WHERE i.box_id = b.id ORDER BY i.updated_at DESC, p.sort LIMIT 1)) AS cover
   FROM boxes b LEFT JOIN locations l ON l.id = b.location_id`;
 
 export function listBoxes(locationId?: number | null): Box[] {
@@ -88,8 +89,16 @@ export function listBoxes(locationId?: number | null): Box[] {
   return db.prepare(`${BOX_SELECT} WHERE b.location_id = ? ORDER BY b.name COLLATE NOCASE`).all(locationId) as unknown as Box[];
 }
 
-export function recentBoxes(limit = 10): Box[] {
-  return db.prepare(`${BOX_SELECT} ORDER BY b.updated_at DESC LIMIT ?`).all(limit) as unknown as Box[];
+export function recentBoxes(limit = 10, excludePinned = false): Box[] {
+  return db.prepare(`${BOX_SELECT} ${excludePinned ? 'WHERE b.pinned = 0' : ''} ORDER BY b.updated_at DESC LIMIT ?`).all(limit) as unknown as Box[];
+}
+
+export function pinnedBoxes(): Box[] {
+  return db.prepare(`${BOX_SELECT} WHERE b.pinned = 1 ORDER BY b.name COLLATE NOCASE`).all() as unknown as Box[];
+}
+
+export function setPinned(id: number, pinned: boolean) {
+  db.prepare('UPDATE boxes SET pinned = ? WHERE id = ?').run(pinned ? 1 : 0, id);
 }
 
 export function getBox(number: number): Box | undefined {
@@ -137,7 +146,7 @@ const ITEM_SELECT = `
     COALESCE(lb.name, li.name) AS location_name, COALESCE(lb.color, li.color) AS location_color,
     (SELECT p.file FROM photos p WHERE p.item_id = i.id ORDER BY p.sort, p.id LIMIT 1) AS cover,
     u.name AS checked_out_name
-  FROM items i
+  FROM live_items i
   LEFT JOIN boxes b ON b.id = i.box_id
   LEFT JOIN locations lb ON lb.id = b.location_id
   LEFT JOIN locations li ON li.id = i.location_id
@@ -266,14 +275,73 @@ export function adjustQuantity(id: number, delta: number, userId: number | null)
   logEvent('item', id, delta < 0 ? 'took' : 'added', { delta, quantity: q }, userId);
 }
 
-export function deleteItem(id: number, userId: number | null): string[] {
+/** Moves to Recently Deleted; photos stay until the item is purged. */
+export function deleteItem(id: number, userId: number | null) {
+  db.prepare('UPDATE items SET deleted_at = ? WHERE id = ?').run(now(), id);
+  db.prepare('DELETE FROM items_fts WHERE rowid = ?').run(id);
+  logEvent('item', id, 'deleted', {}, userId);
+}
+
+export function restoreItem(id: number, userId: number | null) {
+  db.prepare('UPDATE items SET deleted_at = NULL, updated_at = ? WHERE id = ?').run(now(), id);
+  syncFts(id);
+  logEvent('item', id, 'restored', {}, userId);
+}
+
+export function deletedItems() {
+  return db.prepare(`SELECT i.id, i.number, i.name, i.deleted_at, b.name AS box_name,
+      (SELECT p.file FROM photos p WHERE p.item_id = i.id ORDER BY p.sort, p.id LIMIT 1) AS cover
+    FROM items i LEFT JOIN boxes b ON b.id = i.box_id WHERE i.deleted_at IS NOT NULL ORDER BY i.deleted_at DESC`).all() as unknown as { id: number; number: number; name: string; deleted_at: number; box_name: string | null; cover: string | null }[];
+}
+
+/** Permanently removes deleted items (all of them, or those older than the cutoff). Returns photo files to remove. */
+export function purgeDeleted(olderThan?: number, ids?: number[]): string[] {
   return tx(() => {
-    const files = (db.prepare('SELECT file FROM photos WHERE item_id = ?').all(id) as { file: string }[]).map((p) => p.file);
-    db.prepare('DELETE FROM items WHERE id = ?').run(id);
-    db.prepare('DELETE FROM items_fts WHERE rowid = ?').run(id);
-    logEvent('item', id, 'deleted', {}, userId);
+    const rows = ids?.length
+      ? (db.prepare(`SELECT id FROM items WHERE deleted_at IS NOT NULL AND id IN (${ids.map(() => '?').join(',')})`).all(...ids) as { id: number }[])
+      : (db.prepare('SELECT id FROM items WHERE deleted_at IS NOT NULL AND deleted_at < ?').all(olderThan ?? now()) as { id: number }[]);
+    const files: string[] = [];
+    for (const { id } of rows) {
+      files.push(...(db.prepare('SELECT file FROM photos WHERE item_id = ?').all(id) as { file: string }[]).map((p) => p.file));
+      db.prepare('DELETE FROM items WHERE id = ?').run(id);
+    }
     return files;
   });
+}
+
+/* ---------- Missing (from Verify Box) ---------- */
+
+export function setMissing(ids: number[], missing: boolean, userId: number | null) {
+  for (const id of ids) {
+    db.prepare('UPDATE items SET missing_at = ? WHERE id = ?').run(missing ? now() : null, id);
+    logEvent('item', id, missing ? 'marked_missing' : 'found', {}, userId);
+  }
+}
+
+export function missingItems(): Item[] {
+  return db.prepare(`${ITEM_SELECT} WHERE i.missing_at IS NOT NULL ORDER BY i.missing_at DESC`).all() as unknown as Item[];
+}
+
+/* ---------- Bulk ---------- */
+
+export function itemsByIds(ids: number[]): Item[] {
+  if (!ids.length) return [];
+  return db.prepare(`${ITEM_SELECT} WHERE i.id IN (${ids.map(() => '?').join(',')})`).all(...ids) as unknown as Item[];
+}
+
+/** Similar items already in the catalog, for the duplicate check while adding. */
+export function similarItems(name: string, brand: string, limit = 3): Item[] {
+  const q = [brand, name].filter(Boolean).join(' ').trim();
+  if (q.length < 3) return [];
+  const words = q.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length >= 3);
+  if (!words.length) return [];
+  const candidates = search(q, 20).items;
+  // Keep only strong matches: most of the typed words appear in the existing item.
+  return candidates.filter((i) => {
+    const text = `${i.name} ${i.brand} ${i.model}`.toLowerCase();
+    const hits = words.filter((w) => text.includes(w)).length;
+    return hits / words.length >= 0.6;
+  }).slice(0, limit);
 }
 
 export function history(entity: Kind, id: number) {
@@ -297,7 +365,7 @@ export function search(q: string, limit = 60): { items: Item[]; boxes: Box[]; lo
       ids = [];
     }
   }
-  const likeIds = (db.prepare('SELECT id FROM items WHERE name LIKE ? OR tags LIKE ? LIMIT ?').all(like, like, limit) as { id: number }[]).map((r) => r.id);
+  const likeIds = (db.prepare('SELECT id FROM live_items WHERE name LIKE ? OR tags LIKE ? OR brand LIKE ? OR model LIKE ? LIMIT ?').all(like, like, like, like, limit) as { id: number }[]).map((r) => r.id);
   let all = [...new Set([...ids, ...likeIds])];
   if (all.length < 5) all = [...all, ...fuzzyIds(term, limit).filter((id) => !all.includes(id))];
   all = all.slice(0, limit);
@@ -322,7 +390,7 @@ function edits(a: string, b: string): number {
 function fuzzyIds(q: string, limit: number): number[] {
   const tokens = q.toLowerCase().split(/[^a-z0-9]+/).filter((t) => t.length >= 3);
   if (!tokens.length) return [];
-  const rows = db.prepare("SELECT id, name || ' ' || tags || ' ' || keywords AS text FROM items").all() as { id: number; text: string }[];
+  const rows = db.prepare("SELECT id, name || ' ' || tags || ' ' || keywords || ' ' || brand || ' ' || model AS text FROM live_items").all() as { id: number; text: string }[];
   const scored: { id: number; score: number }[] = [];
   for (const r of rows) {
     const words = r.text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
@@ -354,13 +422,13 @@ export function saveMsrp(id: number, r: { cents: number | null; url: string | nu
 const VALUE_SQL = `COALESCE(i.purchase_price_cents, i.msrp_cents, 0) * CASE WHEN i.track_quantity = 1 THEN i.quantity ELSE 1 END`;
 
 export function boxValue(boxId: number): number {
-  return (db.prepare(`SELECT COALESCE(SUM(${VALUE_SQL}), 0) AS v FROM items i WHERE i.box_id = ?`).get(boxId) as { v: number }).v;
+  return (db.prepare(`SELECT COALESCE(SUM(${VALUE_SQL}), 0) AS v FROM live_items i WHERE i.box_id = ?`).get(boxId) as { v: number }).v;
 }
 
 export function locationValue(locationId: number): number {
-  return (db.prepare(`SELECT COALESCE(SUM(${VALUE_SQL}), 0) AS v FROM items i LEFT JOIN boxes b ON b.id = i.box_id WHERE COALESCE(b.location_id, i.location_id) = ?`).get(locationId) as { v: number }).v;
+  return (db.prepare(`SELECT COALESCE(SUM(${VALUE_SQL}), 0) AS v FROM live_items i LEFT JOIN boxes b ON b.id = i.box_id WHERE COALESCE(b.location_id, i.location_id) = ?`).get(locationId) as { v: number }).v;
 }
 
 export function categories(): string[] {
-  return (db.prepare("SELECT category FROM items WHERE category != '' GROUP BY category ORDER BY COUNT(*) DESC LIMIT 40").all() as { category: string }[]).map((r) => r.category);
+  return (db.prepare("SELECT category FROM live_items WHERE category != '' GROUP BY category ORDER BY COUNT(*) DESC LIMIT 40").all() as { category: string }[]).map((r) => r.category);
 }

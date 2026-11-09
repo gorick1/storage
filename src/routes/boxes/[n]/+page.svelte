@@ -10,16 +10,33 @@
   import { toast } from '$lib/client/toast.svelte';
   import { displayCode } from '$lib/codes';
   import { formatMoney } from '$lib/money';
+  import SelectBar from '$lib/components/SelectBar.svelte';
+  import { rememberView } from '$lib/client/actions.svelte';
+  import { api } from '$lib/client/api';
+  import { invalidateAll } from '$app/navigation';
 
   let { data, form } = $props();
   let editing = $state(false);
   let confirmDelete = $state(false);
   let view = $state<'grid' | 'list'>('grid');
+  let selecting = $state(false);
+  let picked = $state<number[]>([]);
+  const toggle = (id: number) => (picked = picked.includes(id) ? picked.filter((x) => x !== id) : [...picked, id]);
+  const endSelect = () => { selecting = false; picked = []; };
+
+  async function pin() {
+    await api(`/api/boxes/${data.box.id}`, { pinned: !data.box.pinned });
+    await invalidateAll();
+    toast(data.box.pinned ? 'Unpinned from Home' : 'Pinned to Home', { icon: 'check' });
+  }
   const loc = $derived(data.locations.find((l) => l.id === data.box.location_id));
 
   onMount(() => {
     const printed = page.url.searchParams.get('printed');
     if (printed) toast('Printing box label…', { icon: 'printer', printJob: Number(printed), action: { label: 'Cancel', run: () => fetch(`/api/print/${printed}`, { method: 'POST', body: JSON.stringify({ action: 'cancel' }) }).then(() => {}) } });
+    rememberView({ kind: 'box', number: data.box.number, name: data.box.name });
+    const deleted = page.url.searchParams.get('deleted');
+    if (deleted) toast('Item moved to Recently Deleted', { icon: 'trash', action: { label: 'Undo', run: async () => { await api('/api/items/bulk', { action: 'restore', ids: [Number(deleted)] }); await invalidateAll(); } } });
     try {
       const v = localStorage.getItem('boxView');
       if (v === 'list' || v === 'grid') view = v;
@@ -40,7 +57,10 @@
 
 <div class="page" data-color={data.box.location_color ?? 'none'}>
   <PageHeader title={data.box.name} back={loc ? { href: `/locations/${loc.number}`, label: loc.name } : { href: '/', label: 'Storage' }} large={false} hero>
-    {#snippet actions()}<button class="btn plain" onclick={() => (editing = true)}>Edit</button>{/snippet}
+    {#snippet actions()}
+      <button class="icon-btn glass" class:pinned={data.box.pinned} onclick={pin} aria-label={data.box.pinned ? 'Unpin from Home' : 'Pin to Home'} aria-pressed={!!data.box.pinned}><Icon name="tag" size={18} stroke={2.2} /></button>
+      <button class="btn plain" onclick={() => (editing = true)}>Edit</button>
+    {/snippet}
   </PageHeader>
 
   <section class="hero" style:view-transition-name={`box-${data.box.number}`}>
@@ -58,6 +78,7 @@
   <div class="actions">
     <a class="act" href={`/add?box=${data.box.number}`} onclick={useAsSticky}><Icon name="camera" size={22} /><span>Add item</span></a>
     <a class="act" href={`/scan?into=${data.box.number}`}><Icon name="scan" size={22} /><span>Scan in</span></a>
+    <a class="act" href={`/boxes/${data.box.number}/verify`}><Icon name="check" size={22} /><span>Verify</span></a>
     <form method="POST" action="?/print" use:enhance={() => async ({ result }) => {
       if (result.type === 'success') toast(result.data?.held ? 'Label held until the right roll is loaded' : 'Printing box label…', { icon: 'printer', printJob: result.data?.held ? undefined : Number(result.data?.jobId) });
       else if (result.type === 'failure') toast(String(result.data?.error), { tone: 'error', icon: 'warning' });
@@ -69,12 +90,19 @@
   {#if data.items.length}
     <div class="section-head">
       <h2>Contents</h2>
-      <div class="segmented view-toggle" role="group" aria-label="View">
-        <button aria-pressed={view === 'grid'} onclick={() => setView('grid')}>Photos</button>
-        <button aria-pressed={view === 'list'} onclick={() => setView('list')}>List</button>
+      <div class="head-tools">
+        {#if !selecting}
+          <div class="segmented view-toggle" role="group" aria-label="View">
+            <button aria-pressed={view === 'grid'} onclick={() => setView('grid')}>Photos</button>
+            <button aria-pressed={view === 'list'} onclick={() => setView('list')}>List</button>
+          </div>
+        {/if}
+        <button class="btn small gray" onclick={() => (selecting ? endSelect() : (selecting = true))}>{selecting ? 'Done' : 'Select'}</button>
       </div>
     </div>
-    {#if view === 'grid'}
+    {#if selecting}
+      <div class="group">{#each data.items as item (item.id)}<ItemRow {item} showPlace={false} selecting selected={picked.includes(item.id)} onToggle={toggle} />{/each}</div>
+    {:else if view === 'grid'}
       <div class="photo-grid">
         {#each data.items as item (item.id)}
           <a class="ph-cell" href={`/items/${item.number}`} style:view-transition-name={`item-${item.number}`}>
@@ -105,6 +133,7 @@
 
   <History events={data.history} />
 </div>
+{#if selecting}<SelectBar ids={picked} onDone={endSelect} />{/if}
 
 <Sheet bind:open={editing} title="Edit Box">
   <form method="POST" action="?/edit" use:enhance={() => async ({ update, result }) => { await update({ reset: false }); if (result.type === 'success') { editing = false; toast('Box saved', { icon: 'check' }); } }}>
@@ -142,11 +171,13 @@
   .hero h1 { font-size: 30px; overflow-wrap: anywhere; }
   .where { margin: 4px 0 0; color: var(--label-2); display: flex; align-items: center; flex-wrap: wrap; }
   .where a { display: inline-flex; align-items: center; gap: 6px; color: color-mix(in srgb, var(--loc) 50%, var(--label)); font-weight: 600; }
-  .actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
   .actions form { display: contents; }
   .act { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 6px; border-radius: 14px; background: var(--bg-2); color: var(--loc, var(--tint)); border: 0; font-size: 13px; font-weight: 500; cursor: pointer; }
   .act span { color: var(--label); }
   .view-toggle { width: 150px; }
+  .head-tools { display: flex; align-items: center; gap: 8px; }
+  .pinned { background: var(--tint) !important; color: #fff !important; }
   .photo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   @media (min-width: 640px) { .photo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (min-width: 1100px) { .photo-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

@@ -128,7 +128,7 @@ export function labelData(kind: Kind, id: number, origin: string): LabelData | n
 }
 
 export function sampleData(kind: Kind, origin: string): LabelData {
-  const table = kind === 'item' ? 'items' : kind === 'box' ? 'boxes' : 'locations';
+  const table = kind === 'item' ? 'live_items' : kind === 'box' ? 'boxes' : 'locations';
   const row = db.prepare(`SELECT id FROM ${table} ORDER BY updated_at DESC LIMIT 1`).get() as { id: number } | undefined;
   const real = row ? labelData(kind, row.id, origin) : null;
   if (real) return real;
@@ -169,7 +169,7 @@ export function directThermalRecords(locationId?: number) {
   const ph = dt.map(() => '?').join(',');
   const locFilterItems = locationId ? 'AND COALESCE(b.location_id, i.location_id) = ?' : '';
   const locFilterBoxes = locationId ? 'AND location_id = ?' : '';
-  const items = (db.prepare(`SELECT i.id FROM items i LEFT JOIN boxes b ON b.id = i.box_id WHERE i.last_label_stock_id IN (${ph}) ${locFilterItems}`).all(...dt, ...(locationId ? [locationId] : [])) as { id: number }[]).map((r) => r.id);
+  const items = (db.prepare(`SELECT i.id FROM live_items i LEFT JOIN boxes b ON b.id = i.box_id WHERE i.last_label_stock_id IN (${ph}) ${locFilterItems}`).all(...dt, ...(locationId ? [locationId] : [])) as { id: number }[]).map((r) => r.id);
   const boxes = (db.prepare(`SELECT id FROM boxes WHERE last_label_stock_id IN (${ph}) ${locFilterBoxes}`).all(...dt, ...(locationId ? [locationId] : [])) as { id: number }[]).map((r) => r.id);
   return { items, boxes };
 }
