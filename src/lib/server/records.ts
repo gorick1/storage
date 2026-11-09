@@ -8,6 +8,10 @@ export interface Item {
   quantity: number; track_quantity: number; box_id: number | null; location_id: number | null;
   checked_out_by: number | null; checked_out_at: number | null; checked_out_note: string | null;
   last_label_stock_id: number | null; label_box_id: number | null;
+  brand: string; model: string; category: string; condition: string; serial_number: string;
+  purchase_price_cents: number | null; purchase_date: string | null;
+  msrp_cents: number | null; msrp_source_url: string | null; msrp_source_name: string | null; msrp_note: string | null; msrp_checked_at: number | null;
+  price_status: 'none' | 'pending' | 'found' | 'not_found' | 'error';
   created_at: number; updated_at: number;
   cover?: string | null; box_name?: string | null; box_number?: number | null; location_name?: string | null; location_color?: string | null; checked_out_name?: string | null;
 }
@@ -172,12 +176,20 @@ export function itemPhotos(itemId: number): { id: number; file: string }[] {
 }
 
 function syncFts(id: number) {
-  const i = db.prepare('SELECT name, description, tags, keywords, notes FROM items WHERE id = ?').get(id) as Record<string, string> | undefined;
+  // Brand, model and category ride in the keywords column so search finds them.
+  const i = db.prepare("SELECT name, description, tags, trim(keywords || ' ' || brand || ' ' || model || ' ' || category) AS keywords, notes FROM items WHERE id = ?").get(id) as Record<string, string> | undefined;
   db.prepare('DELETE FROM items_fts WHERE rowid = ?').run(id);
   if (i) db.prepare('INSERT INTO items_fts (rowid, name, description, tags, keywords, notes) VALUES (?, ?, ?, ?, ?, ?)').run(id, i.name, i.description, i.tags, i.keywords, i.notes);
 }
 
-export interface ItemInput {
+export interface ItemDetails {
+  brand: string; model: string; category: string; condition: string; serial_number: string;
+  purchase_price_cents: number | null; purchase_date: string | null;
+}
+
+export const EMPTY_DETAILS: ItemDetails = { brand: '', model: '', category: '', condition: '', serial_number: '', purchase_price_cents: null, purchase_date: null };
+
+export interface ItemInput extends ItemDetails {
   name: string; description: string; tags: string; keywords: string; notes: string;
   quantity: number; track_quantity: boolean; box_id: number | null; location_id: number | null;
 }
@@ -186,10 +198,12 @@ export function createItem(input: ItemInput, photos: string[], userId: number | 
   return tx(() => {
     const n = nextNumber('item');
     const t = now();
-    const r = db.prepare(`INSERT INTO items (number, name, description, tags, keywords, notes, quantity, track_quantity, box_id, location_id, created_by, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+    const r = db.prepare(`INSERT INTO items (number, name, description, tags, keywords, notes, quantity, track_quantity, box_id, location_id,
+        brand, model, category, condition, serial_number, purchase_price_cents, purchase_date, created_by, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
       n, input.name, input.description, input.tags, input.keywords, input.notes, input.quantity, input.track_quantity ? 1 : 0,
-      input.box_id, input.box_id ? null : input.location_id, userId, t, t);
+      input.box_id, input.box_id ? null : input.location_id,
+      input.brand, input.model, input.category, input.condition, input.serial_number, input.purchase_price_cents, input.purchase_date, userId, t, t);
     const id = Number(r.lastInsertRowid);
     photos.forEach((file, idx) => db.prepare('INSERT INTO photos (item_id, file, sort, created_at) VALUES (?, ?, ?, ?)').run(id, file, idx, t));
     syncFts(id);
@@ -200,8 +214,10 @@ export function createItem(input: ItemInput, photos: string[], userId: number | 
 }
 
 export function updateItem(id: number, input: Omit<ItemInput, 'box_id' | 'location_id'>, userId: number | null) {
-  db.prepare('UPDATE items SET name = ?, description = ?, tags = ?, keywords = ?, notes = ?, quantity = ?, track_quantity = ?, updated_at = ? WHERE id = ?')
-    .run(input.name, input.description, input.tags, input.keywords, input.notes, input.quantity, input.track_quantity ? 1 : 0, now(), id);
+  db.prepare(`UPDATE items SET name = ?, description = ?, tags = ?, keywords = ?, notes = ?, quantity = ?, track_quantity = ?,
+      brand = ?, model = ?, category = ?, condition = ?, serial_number = ?, purchase_price_cents = ?, purchase_date = ?, updated_at = ? WHERE id = ?`)
+    .run(input.name, input.description, input.tags, input.keywords, input.notes, input.quantity, input.track_quantity ? 1 : 0,
+      input.brand, input.model, input.category, input.condition, input.serial_number, input.purchase_price_cents, input.purchase_date, now(), id);
   syncFts(id);
   logEvent('item', id, 'edited', {}, userId);
 }
@@ -321,4 +337,30 @@ function fuzzyIds(q: string, limit: number): number[] {
     if (score > 0) scored.push({ id: r.id, score });
   }
   return scored.sort((a, b) => b.score - a.score).slice(0, limit).map((s) => s.id);
+}
+
+/* ---------- Value ---------- */
+
+export function setPriceStatus(id: number, status: Item['price_status']) {
+  db.prepare('UPDATE items SET price_status = ? WHERE id = ?').run(status, id);
+}
+
+export function saveMsrp(id: number, r: { cents: number | null; url: string | null; source: string | null; note: string | null }, status: Item['price_status']) {
+  db.prepare('UPDATE items SET msrp_cents = ?, msrp_source_url = ?, msrp_source_name = ?, msrp_note = ?, msrp_checked_at = ?, price_status = ? WHERE id = ?')
+    .run(r.cents, r.url, r.source, r.note, now(), status, id);
+}
+
+/** Estimated value: what you paid if known, otherwise MSRP; times quantity when tracked. */
+const VALUE_SQL = `COALESCE(i.purchase_price_cents, i.msrp_cents, 0) * CASE WHEN i.track_quantity = 1 THEN i.quantity ELSE 1 END`;
+
+export function boxValue(boxId: number): number {
+  return (db.prepare(`SELECT COALESCE(SUM(${VALUE_SQL}), 0) AS v FROM items i WHERE i.box_id = ?`).get(boxId) as { v: number }).v;
+}
+
+export function locationValue(locationId: number): number {
+  return (db.prepare(`SELECT COALESCE(SUM(${VALUE_SQL}), 0) AS v FROM items i LEFT JOIN boxes b ON b.id = i.box_id WHERE COALESCE(b.location_id, i.location_id) = ?`).get(locationId) as { v: number }).v;
+}
+
+export function categories(): string[] {
+  return (db.prepare("SELECT category FROM items WHERE category != '' GROUP BY category ORDER BY COUNT(*) DESC LIMIT 40").all() as { category: string }[]).map((r) => r.category);
 }

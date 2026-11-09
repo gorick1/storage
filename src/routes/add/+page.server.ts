@@ -3,6 +3,9 @@ import { boxById, createItem, getBox, getItem, getLocation, locationById } from 
 import { savePhoto } from '$lib/server/photos';
 import { autoPrint } from '$lib/server/labels';
 import { aiConfigured } from '$lib/server/ai';
+import { parseDetails } from '$lib/server/forms';
+import { queuePriceLookup } from '$lib/server/pricing';
+import { categories } from '$lib/server/records';
 
 export const load = ({ url }) => {
   const from = url.searchParams.get('from') ? getItem(Number(url.searchParams.get('from'))) : undefined;
@@ -12,7 +15,8 @@ export const load = ({ url }) => {
   const location = locN ? getLocation(Number(locN)) : from?.location_id ? locationById(from.location_id) : undefined;
   return {
     aiReady: aiConfigured(),
-    prefill: from ? { name: from.name, description: from.description, tags: from.tags, quantity: from.quantity, track_quantity: !!from.track_quantity, keywords: from.keywords } : null,
+    prefill: from ? { name: from.name, description: from.description, tags: from.tags, quantity: from.quantity, track_quantity: !!from.track_quantity, keywords: from.keywords, brand: from.brand, model: from.model, category: from.category, condition: from.condition } : null,
+    categories: categories(),
     box: box ?? null,
     location: location ?? null
   };
@@ -41,9 +45,12 @@ export const actions = {
       quantity: Math.max(0, Number(f.get('quantity')) || 1),
       track_quantity: f.get('track_quantity') === 'on',
       box_id: boxId,
-      location_id: boxId ? null : locationId
+      location_id: boxId ? null : locationId,
+      ...parseDetails(f)
     }, photos, locals.user!.id);
+    // Branded items get an MSRP looked up in the background; saving never waits on it.
+    const pricing = f.get('lookup_price') === 'off' ? false : queuePriceLookup(item.id, { onlyIfBranded: true });
     const job = f.get('print') === 'off' ? null : autoPrint('item', item.id, url.origin, locals.user!.id);
-    return { created: { number: item.number, name: item.name }, job: job && 'jobId' in job ? { id: job.jobId, held: job.held } : null };
+    return { created: { number: item.number, name: item.name }, job: job && 'jobId' in job ? { id: job.jobId, held: job.held } : null, pricing };
   }
 };

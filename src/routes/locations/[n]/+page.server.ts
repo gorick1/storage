@@ -1,12 +1,12 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { createBox, deleteLocation, getLocation, listBoxes, looseItems, updateLocation } from '$lib/server/records';
+import { createBox, deleteLocation, getLocation, listBoxes, locationValue, looseItems, updateLocation } from '$lib/server/records';
 import { printRecord } from '$lib/server/labels';
 import { COLORS, LOCATION_ICONS } from '$lib/icons';
 
 export const load = ({ params }) => {
   const loc = getLocation(Number(params.n));
   if (!loc) error(404, 'That place doesn’t exist.');
-  return { loc, boxes: listBoxes(loc.id), loose: looseItems(loc.id) };
+  return { loc, boxes: listBoxes(loc.id), loose: looseItems(loc.id), value: locationValue(loc.id) };
 };
 
 export const actions = {

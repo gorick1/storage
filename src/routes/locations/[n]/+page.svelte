@@ -8,6 +8,7 @@
   import LocationForm from '$lib/components/LocationForm.svelte';
   import { toast } from '$lib/client/toast.svelte';
   import { displayCode } from '$lib/codes';
+  import { formatMoney } from '$lib/money';
 
   let { data, form } = $props();
   let editing = $state(false);
@@ -29,7 +30,7 @@
     <span class="glyph"><Icon name={data.loc.icon} size={30} stroke={2} /></span>
     <div>
       <h1 class="large-title">{data.loc.name}</h1>
-      <p class="stats num">{data.boxes.length} {data.boxes.length === 1 ? 'box' : 'boxes'} · {itemCount} {itemCount === 1 ? 'item' : 'items'} · <span class="mono">{displayCode('location', data.loc.number)}</span></p>
+      <p class="stats num">{data.boxes.length} {data.boxes.length === 1 ? 'box' : 'boxes'} · {itemCount} {itemCount === 1 ? 'item' : 'items'}{#if data.value}{' · '}about {formatMoney(data.value, { whole: true })}{/if} · <span class="mono">{displayCode('location', data.loc.number)}</span></p>
     </div>
   </section>
 

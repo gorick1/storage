@@ -1,11 +1,11 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { deleteBox, getBox, history, itemsInBox, listLocations, updateBox } from '$lib/server/records';
+import { boxValue, deleteBox, getBox, history, itemsInBox, listLocations, updateBox } from '$lib/server/records';
 import { printRecord } from '$lib/server/labels';
 
 export const load = ({ params }) => {
   const box = getBox(Number(params.n));
   if (!box) error(404, 'That box doesn’t exist.');
-  return { box, items: itemsInBox(box.id), locations: listLocations(), history: history('box', box.id) };
+  return { box, items: itemsInBox(box.id), locations: listLocations(), history: history('box', box.id), value: boxValue(box.id) };
 };
 
 export const actions = {

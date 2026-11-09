@@ -41,6 +41,9 @@ export interface LabelData {
   location: string;
   contents: string; // boxes: first items
   item_count: string;
+  brand: string;
+  model: string;
+  value: string; // MSRP or price paid
   qr: string; // full QR URL
   code: string; // barcode value (display code)
   date: string;
@@ -50,6 +53,9 @@ export const FIELDS: { key: keyof LabelData; label: string; kinds: Kind[] }[] = 
   { key: 'name', label: 'Name', kinds: ['item', 'box', 'location'] },
   { key: 'number', label: 'Number', kinds: ['item', 'box', 'location'] },
   { key: 'description', label: 'Description', kinds: ['item'] },
+  { key: 'brand', label: 'Brand', kinds: ['item'] },
+  { key: 'model', label: 'Model', kinds: ['item'] },
+  { key: 'value', label: 'Value', kinds: ['item', 'box'] },
   { key: 'quantity', label: 'Quantity', kinds: ['item'] },
   { key: 'box', label: 'Box name', kinds: ['item'] },
   { key: 'box_number', label: 'Box number', kinds: ['item'] },

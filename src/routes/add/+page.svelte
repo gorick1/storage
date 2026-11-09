@@ -6,6 +6,7 @@
   import Icon from '$lib/components/Icon.svelte';
   import Sheet from '$lib/components/Sheet.svelte';
   import BoxPicker from '$lib/components/BoxPicker.svelte';
+  import DetailFields from '$lib/components/DetailFields.svelte';
   import { preparePhoto, blobToBase64, type PreparedPhoto } from '$lib/client/image';
   import { api } from '$lib/client/api';
   import { toast } from '$lib/client/toast.svelte';
@@ -22,6 +23,15 @@
   let keywords = $state('');
   let quantity = $state(1);
   let track = $state(false);
+  let brand = $state('');
+  let model = $state('');
+  let category = $state('');
+  let condition = $state('');
+  let serial = $state('');
+  let paid = $state('');
+  let paidOn = $state('');
+  let lookupPrice = $state(true);
+  let showDetails = $state(false);
   let printLabel = $state(true);
   let picking = $state(false);
   let ai = $state<'idle' | 'thinking' | 'done' | 'error'>('idle');
@@ -36,6 +46,8 @@
     name = description = tags = keywords = '';
     quantity = 1;
     track = false;
+    brand = model = category = condition = serial = paid = paidOn = '';
+    showDetails = false;
     ai = 'idle';
     aiNote = '';
     error = '';
@@ -44,7 +56,8 @@
 
   onMount(() => {
     if (data.prefill) {
-      ({ name, description, tags, keywords } = data.prefill);
+      ({ name, description, tags, keywords, brand, model, category, condition } = data.prefill);
+      showDetails = !!(brand || model);
       quantity = data.prefill.quantity;
       track = data.prefill.track_quantity;
     }
@@ -95,12 +108,17 @@
     ai = 'thinking';
     aiNote = '';
     try {
-      const s = await api<{ name: string; description: string; tags: string[]; keywords: string[]; quantity: number; confident: boolean }>('/api/ai/identify', { image: await blobToBase64(p.full), mediaType: 'image/jpeg' });
+      const s = await api<{ name: string; description: string; tags: string[]; keywords: string[]; quantity: number; confident: boolean; brand: string; model: string; category: string; condition: string }>('/api/ai/identify', { image: await blobToBase64(p.full), mediaType: 'image/jpeg' });
       // Never overwrite what the person already typed.
       if (!name) name = s.name;
       if (!description) description = s.description;
       if (!tags) tags = s.tags.join(', ');
       keywords = s.keywords.join(' ');
+      if (!brand) brand = s.brand;
+      if (!model) model = s.model;
+      if (!category) category = s.category;
+      if (!condition && s.condition !== 'unknown') condition = s.condition;
+      if (brand || model) showDetails = true;
       if (s.quantity > 1) { quantity = s.quantity; track = true; }
       ai = 'done';
       aiNote = s.confident ? 'Filled in from your photo. Check it over.' : 'Not sure about this one. Check the name.';
@@ -129,6 +147,8 @@
     if (dest.box) fd.set('box_id', String(dest.box.id));
     if (dest.location) fd.set('location_id', String(dest.location.id));
     fd.set('print', printLabel ? 'on' : 'off');
+    fd.set('lookup_price', lookupPrice ? 'on' : 'off');
+    for (const [k, v] of Object.entries({ brand, model, category, condition, serial_number: serial, purchase_price: paid, purchase_date: paidOn })) fd.set(k, v);
     photos.forEach((p, i) => { fd.append(`full_${i}`, p.full, `p${i}.jpg`); fd.append(`thumb_${i}`, p.thumb, `t${i}.jpg`); });
     try {
       const res = await fetch(location.pathname, { method: 'POST', body: fd, headers: { accept: 'application/json', 'x-sveltekit-action': 'true' } });
@@ -136,6 +156,7 @@
       if (out.type !== 'success') throw new Error((out.type === 'failure' && (out.data?.error as string)) || 'Could not save. Check your connection and try again.');
       const created = out.data!.created as { number: number; name: string };
       const job = out.data!.job as { id: number; held: boolean } | null;
+      if (out.data!.pricing) setTimeout(() => toast(`Looking up the price of ${created.name}`, { icon: 'search', ms: 4000 }), 400);
       if (job?.held) toast(`Saved ${created.name}. Label held for the item roll.`, { icon: 'warning' });
       else if (job) toast(`Saved ${created.name}. Printing label…`, { icon: 'printer', printJob: job.id, ms: 7000, action: { label: 'Cancel print', run: () => api(`/api/print/${job.id}`, { action: 'cancel' }).then(() => {}) } });
       else toast(`Saved ${created.name}`, { icon: 'check', action: { label: 'View', run: () => goto(`/items/${created.number}`) } });
@@ -194,6 +215,13 @@
       <label class="row"><span class="lbl">Tags</span><input placeholder="tools, camping" bind:value={tags} autocapitalize="none" /></label>
     </div>
 
+    {#if showDetails}
+      <h3 class="group-label">Details</h3>
+      <DetailFields bind:brand bind:model bind:category bind:condition bind:serial_number={serial} bind:purchase_price={paid} bind:purchase_date={paidOn} categories={data.categories} />
+    {:else}
+      <button type="button" class="btn plain more" onclick={() => (showDetails = true)}><Icon name="plus" size={18} stroke={2.2} /> Brand, model, price…</button>
+    {/if}
+
     <div class="group" style="margin-top:20px">
       <label class="row"><span class="grow">Track quantity</span><input type="checkbox" class="switch" bind:checked={track} /></label>
       {#if track}
@@ -205,6 +233,7 @@
         </div>
       {/if}
       <label class="row"><span class="grow">Print label when saved</span><input type="checkbox" class="switch" bind:checked={printLabel} /></label>
+      {#if data.aiReady}<label class="row"><span class="grow">Look up price online<span class="sub" style="display:block">Branded items only</span></span><input type="checkbox" class="switch" bind:checked={lookupPrice} /></label>{/if}
     </div>
 
     {#if error}<p class="error-text">{error}</p>{/if}
@@ -247,6 +276,7 @@
   .fields { transition: opacity 0.3s; }
   .fields.shimmer { opacity: 0.6; }
   .name { font-size: 20px; font-weight: 600; }
+  .more { margin-top: 6px; padding-left: 4px; }
   .qty { width: 56px; text-align: center !important; flex: none !important; font-size: 18px; font-weight: 600; }
   .savebar { position: sticky; bottom: calc(var(--tabbar-h) + 10px); margin-top: 22px; z-index: 5; }
   .savebar .btn { box-shadow: 0 8px 24px color-mix(in srgb, var(--tint) 35%, transparent); }

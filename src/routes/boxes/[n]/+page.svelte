@@ -9,6 +9,7 @@
   import History from '$lib/components/History.svelte';
   import { toast } from '$lib/client/toast.svelte';
   import { displayCode } from '$lib/codes';
+  import { formatMoney } from '$lib/money';
 
   let { data, form } = $props();
   let editing = $state(false);
@@ -50,7 +51,7 @@
     <h1 class="large-title">{data.box.name}</h1>
     <p class="where">
       {#if loc}<a href={`/locations/${loc.number}`}><span class="dot"></span>{loc.name}</a>{:else}<span>No place yet</span>{/if}
-      <span class="num">&nbsp;· {data.items.length} {data.items.length === 1 ? 'item' : 'items'}</span>
+      <span class="num">&nbsp;· {data.items.length} {data.items.length === 1 ? 'item' : 'items'}{#if data.value}{' · '}about {formatMoney(data.value, { whole: true })}{/if}</span>
     </p>
   </section>
 

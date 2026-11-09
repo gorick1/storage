@@ -6,6 +6,8 @@
   import Sheet from '$lib/components/Sheet.svelte';
   import BoxPicker from '$lib/components/BoxPicker.svelte';
   import History from '$lib/components/History.svelte';
+  import DetailFields from '$lib/components/DetailFields.svelte';
+  import { formatMoney, CONDITION_LABEL } from '$lib/money';
   import { toast } from '$lib/client/toast.svelte';
   import { api } from '$lib/client/api';
   import { preparePhoto } from '$lib/client/image';
@@ -76,6 +78,25 @@
   }
 
   const fmtDate = (t: number) => new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const fmtDay = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  // While a price lookup runs on the server, refresh until it lands.
+  $effect(() => {
+    if (item.price_status !== 'pending') return;
+    const t = setInterval(() => invalidateAll(), 3000);
+    return () => clearInterval(t);
+  });
+
+  const details = $derived(
+    [
+      ['Brand', item.brand],
+      ['Model', item.model],
+      ['Category', item.category],
+      ['Condition', CONDITION_LABEL[item.condition] ?? ''],
+      ['Serial number', item.serial_number]
+    ].filter(([, v]) => v) as [string, string][]
+  );
+  const unit = $derived(item.track_quantity ? ' each' : '');
 </script>
 
 <svelte:head><title>{item.name} · Storage</title></svelte:head>
@@ -140,6 +161,44 @@
           <button class="icon-btn" aria-label="Add one" onclick={() => qty(1)}><Icon name="plus" size={18} stroke={2.6} /></button>
         </div>
       {/if}
+
+      {#if details.length}
+        <h3 class="group-label">Details</h3>
+        <div class="group">
+          {#each details as [k, v]}<div class="row"><span class="grow muted">{k}</span><span class={k === 'Model' || k === 'Serial number' ? 'mono-val' : ''}>{v}</span></div>{/each}
+        </div>
+      {/if}
+
+      <h3 class="group-label">Value</h3>
+      <div class="group value">
+        <div class="row">
+          <span class="grow">
+            <span class="vlabel muted">Retail price (MSRP)</span>
+            {#if item.price_status === 'pending'}
+              <span class="vbig searching">Searching the web…</span>
+            {:else if item.msrp_cents != null}
+              <span class="vbig num">{formatMoney(item.msrp_cents)}<span class="unit">{unit}</span></span>
+            {:else}
+              <span class="vbig none">{item.price_status === 'not_found' ? 'No price found' : item.price_status === 'error' ? 'Lookup failed' : 'Not looked up'}</span>
+            {/if}
+          </span>
+          {#if data.aiReady && item.price_status !== 'pending'}
+            <form method="POST" action="?/price" use:enhance={() => async ({ result, update }) => { await update(); if (result.type === 'failure') toast(String(result.data?.error), { tone: 'error', icon: 'warning' }); }}>
+              <button class="btn small gray"><Icon name="search" size={15} stroke={2.4} /> {item.msrp_checked_at ? 'Check again' : 'Look up'}</button>
+            </form>
+          {/if}
+        </div>
+        {#if item.msrp_note && item.price_status !== 'pending'}
+          <p class="row vnote footnote">
+            {item.msrp_note}
+            {#if item.msrp_source_url}<br /><a href={item.msrp_source_url} target="_blank" rel="noopener noreferrer">{item.msrp_source_name || 'Source'}</a>{/if}
+            {#if item.msrp_checked_at}<span class="muted"> · checked {fmtDate(item.msrp_checked_at)}</span>{/if}
+          </p>
+        {/if}
+        {#if item.purchase_price_cents != null || item.purchase_date}
+          <div class="row"><span class="grow muted">Paid</span><span class="num">{formatMoney(item.purchase_price_cents)}{item.purchase_date ? `${item.purchase_price_cents != null ? ' · ' : ''}${fmtDay(item.purchase_date)}` : ''}</span></div>
+        {/if}
+      </div>
 
       <div class="actions">
         <button class="act" onclick={() => (moving = true)}><Icon name="move" size={22} /><span>Move</span></button>
@@ -207,6 +266,9 @@
       <label class="row"><textarea name="description" rows="2" placeholder="Description">{item.description}</textarea></label>
       <label class="row"><span class="lbl">Tags</span><input name="tags" value={item.tags} placeholder="tools, camping" /></label>
     </div>
+    <h3 class="group-label">Details</h3>
+    <DetailFields brand={item.brand} model={item.model} category={item.category} condition={item.condition} serial_number={item.serial_number}
+      purchase_price={item.purchase_price_cents != null ? (item.purchase_price_cents / 100).toFixed(2) : ''} purchase_date={item.purchase_date ?? ''} categories={data.categories} />
     <div class="group" style="margin-top:20px">
       <label class="row"><span class="grow">Track quantity</span><input type="checkbox" class="switch" name="track_quantity" checked={!!item.track_quantity} /></label>
       <label class="row"><span class="lbl">Quantity</span><input name="quantity" type="number" min="0" value={item.quantity} inputmode="numeric" /></label>
@@ -250,6 +312,15 @@
   .grow { flex: 1; min-width: 0; }
   .wname { display: block; font-weight: 600; font-size: 18px; }
   .wsub { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--label-2); }
+  .mono-val { font-family: var(--mono); font-size: 15px; }
+  .value .grow { display: flex; flex-direction: column; }
+  .vlabel { font-size: 13px; }
+  .vbig { font: 600 22px/1.25 var(--font-display); }
+  .vbig .unit { font: 400 15px var(--font); color: var(--label-2); }
+  .vbig.none { font: 400 17px var(--font); color: var(--label-2); }
+  .vbig.searching { font: 500 17px var(--font); color: var(--label-2); animation: breathe 1.4s ease-in-out infinite; }
+  .vnote { display: block; color: var(--label-2); padding-top: 0; }
+  @keyframes breathe { 50% { opacity: 0.45; } }
   .qty-card { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 14px; border-radius: 16px; background: var(--bg-2); }
   .qty-card .grow { display: flex; flex-direction: column; }
   .qn { font: 700 28px/1.1 var(--font-display); }

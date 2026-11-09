@@ -4,7 +4,8 @@ import { dots } from '$lib/labels/types';
 import { renderZpl } from '$lib/labels/zpl';
 import { defaultElements } from '$lib/labels/defaults';
 import { displayCode, qrUrl, type Kind } from '$lib/codes';
-import { boxById, itemById, itemsInBox, locationById, looseItems, listBoxes } from './records';
+import { boxById, boxValue, itemById, itemsInBox, locationById, looseItems, listBoxes } from './records';
+import { formatMoney } from '$lib/money';
 import { enqueue } from './printer';
 
 type TemplateRow = Omit<LabelTemplate, 'elements' | 'is_default' | 'auto_print'> & { elements: string; is_default: number; auto_print: number };
@@ -99,7 +100,8 @@ export function labelData(kind: Kind, id: number, origin: string): LabelData | n
     return {
       number: displayCode('item', i.number), name: i.name, description: i.description, quantity: i.track_quantity ? `Qty ${i.quantity}` : '',
       box: i.box_name ?? (i.location_name ? 'Loose' : ''), box_number: i.box_number ? displayCode('box', i.box_number) : '',
-      location: i.location_name ?? '', contents: '', item_count: '', qr: qrUrl(base, 'item', i.number), code: displayCode('item', i.number), date
+      location: i.location_name ?? '', contents: '', item_count: '', brand: i.brand, model: i.model, value: formatMoney(i.purchase_price_cents ?? i.msrp_cents),
+      qr: qrUrl(base, 'item', i.number), code: displayCode('item', i.number), date
     };
   }
   if (kind === 'box') {
@@ -109,7 +111,8 @@ export function labelData(kind: Kind, id: number, origin: string): LabelData | n
     return {
       number: displayCode('box', b.number), name: b.name, description: b.notes, quantity: '', box: b.name, box_number: displayCode('box', b.number),
       location: b.location_name ?? '', contents: items.map((i) => (i.track_quantity ? `${i.name} (${i.quantity})` : i.name)).join(', '),
-      item_count: String(items.length), qr: qrUrl(base, 'box', b.number), code: displayCode('box', b.number), date
+      item_count: String(items.length), brand: '', model: '', value: formatMoney(boxValue(b.id) || null, { whole: true }),
+      qr: qrUrl(base, 'box', b.number), code: displayCode('box', b.number), date
     };
   }
   const l = locationById(id);
@@ -119,6 +122,7 @@ export function labelData(kind: Kind, id: number, origin: string): LabelData | n
   return {
     number: displayCode('location', l.number), name: l.name, description: l.notes, quantity: '', box: '', box_number: '', location: l.name,
     contents: [...boxes.map((b) => b.name), ...loose.map((i) => i.name)].join(', '), item_count: String((l as { item_count?: number }).item_count ?? loose.length),
+    brand: '', model: '', value: '',
     qr: qrUrl(base, 'location', l.number), code: displayCode('location', l.number), date
   };
 }
@@ -132,7 +136,8 @@ export function sampleData(kind: Kind, origin: string): LabelData {
   return {
     number: displayCode(kind, 42), name: kind === 'item' ? 'Cordless drill' : kind === 'box' ? 'Power tools' : 'Garage',
     description: '18V with two batteries', quantity: 'Qty 1', box: 'Power tools', box_number: displayCode('box', 12), location: 'Garage',
-    contents: 'Cordless drill, Impact driver, Bit set, Chargers', item_count: '4', qr: qrUrl(base, kind, 42), code: displayCode(kind, 42),
+    contents: 'Cordless drill, Impact driver, Bit set, Chargers', item_count: '4', brand: 'DeWalt', model: 'DCD771C2', value: '$159.00',
+    qr: qrUrl(base, kind, 42), code: displayCode(kind, 42),
     date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   };
 }

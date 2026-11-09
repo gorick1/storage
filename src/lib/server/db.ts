@@ -164,6 +164,23 @@ const MIGRATIONS: string[] = [
     sent_at INTEGER
   );
   CREATE INDEX print_jobs_status ON print_jobs(status, run_after);
+  `,
+  `
+  ALTER TABLE items ADD COLUMN brand TEXT NOT NULL DEFAULT '';
+  ALTER TABLE items ADD COLUMN model TEXT NOT NULL DEFAULT '';
+  ALTER TABLE items ADD COLUMN category TEXT NOT NULL DEFAULT '';
+  ALTER TABLE items ADD COLUMN condition TEXT NOT NULL DEFAULT '';
+  ALTER TABLE items ADD COLUMN serial_number TEXT NOT NULL DEFAULT '';
+  ALTER TABLE items ADD COLUMN purchase_price_cents INTEGER;
+  ALTER TABLE items ADD COLUMN purchase_date TEXT;
+  ALTER TABLE items ADD COLUMN msrp_cents INTEGER;
+  ALTER TABLE items ADD COLUMN msrp_source_url TEXT;
+  ALTER TABLE items ADD COLUMN msrp_source_name TEXT;
+  ALTER TABLE items ADD COLUMN msrp_note TEXT;
+  ALTER TABLE items ADD COLUMN msrp_checked_at INTEGER;
+  ALTER TABLE items ADD COLUMN price_status TEXT NOT NULL DEFAULT 'none';
+  CREATE INDEX items_brand ON items(brand);
+  CREATE INDEX items_category ON items(category);
   `
 ];
 
