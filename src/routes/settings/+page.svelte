@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { startRegistration } from '@simplewebauthn/browser';
+  import { onMount } from 'svelte';
+  import { prefetchRegistration, registerPasskey, describeError } from '$lib/client/passkey';
   import { invalidateAll } from '$app/navigation';
   import PageHeader from '$lib/components/PageHeader.svelte';
   import Icon from '$lib/components/Icon.svelte';
@@ -12,6 +13,7 @@
   const admin = $derived(data.user?.role === 'admin');
   let qrBase = $state(data.qrBase);
   let testing = $state(false);
+  onMount(prefetchRegistration);
 
   const saved = () => async ({ result, update }: { result: { type: string; data?: Record<string, unknown> }; update: (o?: { reset?: boolean }) => Promise<void> }) => {
     await update({ reset: false });
@@ -33,13 +35,11 @@
 
   async function addPasskey() {
     try {
-      const { options, challengeId } = await api<{ options: any; challengeId: string }>('/api/auth/register', { step: 'options' });
-      const response = await startRegistration({ optionsJSON: options });
-      await api('/api/auth/register', { step: 'verify', challengeId, response, deviceName: navigator.platform || 'Device' });
+      await registerPasskey(navigator.platform || 'Device');
       await invalidateAll();
       toast('Passkey added', { icon: 'key' });
     } catch (e) {
-      if ((e as Error).name !== 'NotAllowedError') toast((e as Error).message, { tone: 'error', icon: 'warning' });
+      toast(describeError(e), { tone: 'error', icon: 'warning' });
     }
   }
 

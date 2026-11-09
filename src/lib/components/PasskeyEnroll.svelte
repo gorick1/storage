@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { startRegistration } from '@simplewebauthn/browser';
-  import { api } from '$lib/client/api';
+  import { onMount } from 'svelte';
+  import { prefetchRegistration, registerPasskey, describeError } from '$lib/client/passkey';
   import Icon from './Icon.svelte';
 
   let { codes, onDone }: { codes: string[]; onDone: () => void } = $props();
@@ -8,16 +8,16 @@
   let message = $state('');
   let saved = $state(false);
 
+  onMount(prefetchRegistration);
+
   async function enroll() {
     phase = 'busy';
     try {
-      const { options, challengeId } = await api<{ options: any; challengeId: string }>('/api/auth/register', { step: 'options' });
-      const response = await startRegistration({ optionsJSON: options });
-      await api('/api/auth/register', { step: 'verify', challengeId, response, deviceName: navigator.platform || 'This device' });
+      await registerPasskey(navigator.platform || 'This device');
       phase = 'done';
     } catch (e) {
       phase = 'error';
-      message = (e as Error).name === 'NotAllowedError' ? 'Passkey setup was cancelled. You can try again, or use a recovery code to sign in.' : (e as Error).message;
+      message = describeError(e);
     }
   }
 

@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { startAuthentication } from '@simplewebauthn/browser';
+  import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { loginWithPasskey, prefetchLogin, describeError } from '$lib/client/passkey';
   import { api } from '$lib/client/api';
   import AuthCard from '$lib/components/AuthCard.svelte';
   import Icon from '$lib/components/Icon.svelte';
@@ -10,6 +11,7 @@
   let error = $state('');
   let showCode = $state(false);
   let code = $state('');
+  onMount(prefetchLogin);
 
   async function done() {
     // Capture the destination first: once the session exists, this page's data changes underneath us.
@@ -21,12 +23,10 @@
     busy = true;
     error = '';
     try {
-      const { options, challengeId } = await api<{ options: any; challengeId: string }>('/api/auth/login', { step: 'options' });
-      const response = await startAuthentication({ optionsJSON: options });
-      await api('/api/auth/login', { step: 'verify', challengeId, response });
+      await loginWithPasskey();
       await done();
     } catch (e) {
-      error = (e as Error).name === 'NotAllowedError' ? 'Sign-in was cancelled.' : (e as Error).message;
+      error = describeError(e);
     } finally {
       busy = false;
     }
@@ -62,6 +62,7 @@
     <button class="btn plain" onclick={() => (showCode = true)}>Use a recovery code</button>
   {/if}
   {#if error}<p class="error-text center">{error}</p>{/if}
+  {#if data.setupOpen}<a class="btn plain" href="/setup">Finish setting up Storage</a>{/if}
   <p class="footnote muted center">New here? Ask whoever set up Storage for an invite link.</p>
 </AuthCard>
 

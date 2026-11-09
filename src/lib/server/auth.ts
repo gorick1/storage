@@ -20,6 +20,43 @@ export function userCount(): number {
   return (db.prepare('SELECT COUNT(*) AS c FROM users').get() as { c: number }).c;
 }
 
+export function credentialCount(): number {
+  return (db.prepare('SELECT COUNT(*) AS c FROM credentials').get() as { c: number }).c;
+}
+
+/*
+ * First-run setup stays open until someone has a working passkey. Because the site is public,
+ * claiming it needs a one-time code that is only printed to the server log (Home Assistant → Apps → Storage → Log).
+ */
+export function setupOpen(): boolean {
+  return credentialCount() === 0;
+}
+
+export function issueSetupCode(): string | null {
+  if (!setupOpen()) {
+    db.prepare("DELETE FROM settings WHERE key = 'setup_code_hash'").run();
+    return null;
+  }
+  const bytes = randomBytes(8);
+  let s = '';
+  for (const b of bytes) s += ALPHABET[b % ALPHABET.length];
+  const code = `${s.slice(0, 4)}-${s.slice(4)}`;
+  db.prepare("INSERT INTO settings (key, value) VALUES ('setup_code_hash', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").run(sha(code));
+  return code;
+}
+
+export function checkSetupCode(code: string): boolean {
+  const norm = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (norm.length !== 8) return false;
+  const row = db.prepare("SELECT value FROM settings WHERE key = 'setup_code_hash'").get() as { value: string } | undefined;
+  return !!row && row.value === sha(`${norm.slice(0, 4)}-${norm.slice(4)}`);
+}
+
+/** Remove accounts that never finished setting up a passkey (their sessions and codes go with them). */
+export function removeIncompleteUsers() {
+  db.prepare('DELETE FROM users WHERE id NOT IN (SELECT DISTINCT user_id FROM credentials)').run();
+}
+
 export function listUsers() {
   return db.prepare(`SELECT u.id, u.name, u.role, u.created_at,
     (SELECT COUNT(*) FROM credentials c WHERE c.user_id = u.id) AS passkeys,
