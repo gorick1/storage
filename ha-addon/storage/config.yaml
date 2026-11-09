@@ -1,0 +1,27 @@
+name: Storage
+version: "0.1.0"
+slug: storage
+description: Household storage catalog with Zebra label printing, QR codes and photo AI.
+url: https://github.com/OWNER/storage
+arch:
+  - amd64
+  - aarch64
+image: ghcr.io/OWNER/storage
+startup: application
+boot: auto
+init: false
+ports:
+  3000/tcp: 3000
+ports_description:
+  3000/tcp: Web app (point Cloudflared or Nginx Proxy Manager here)
+webui: http://[HOST]:[PORT:3000]
+panel_icon: mdi:package-variant-closed
+map:
+  - addon_config:rw
+backup: hot
+options:
+  public_url: https://storage.garrettorick.com
+  anthropic_api_key: ""
+schema:
+  public_url: url
+  anthropic_api_key: password?

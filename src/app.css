@@ -1,0 +1,190 @@
+/* Apple-native system grammar. Light and dark follow the device. */
+:root {
+  color-scheme: light dark;
+  --bg: #f2f2f7;            /* systemGroupedBackground */
+  --bg-2: #ffffff;          /* secondarySystemGroupedBackground */
+  --bg-3: #f2f2f7;
+  --fill: rgba(120, 120, 128, 0.12);
+  --fill-2: rgba(120, 120, 128, 0.2);
+  --label: #000000;
+  --label-2: rgba(60, 60, 67, 0.62);
+  --label-3: rgba(60, 60, 67, 0.36);
+  --sep: rgba(60, 60, 67, 0.18);
+  --tint: #007aff;
+  --red: #ff3b30;
+  --green: #34c759;
+  --bar: rgba(249, 249, 249, 0.82);
+  --switch-off: #e9e9ea;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(0, 0, 0, 0.06);
+  --shadow-lift: 0 2px 6px rgba(0, 0, 0, 0.08), 0 18px 40px rgba(0, 0, 0, 0.12);
+
+  --c-teal: #30b0c7; --c-orange: #ff9500; --c-purple: #af52de; --c-green: #34c759; --c-indigo: #5856d6;
+  --c-pink: #ff2d55; --c-yellow: #ffcc00; --c-blue: #007aff; --c-red: #ff3b30; --c-brown: #a2845e;
+
+  --r-tile: 22px;
+  --r-group: 12px;
+  --r-ctl: 10px;
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+  --tabbar-h: calc(56px + var(--safe-b));
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --bg-2: #1c1c1e;
+    --bg-3: #2c2c2e;
+    --fill: rgba(118, 118, 128, 0.24);
+    --fill-2: rgba(118, 118, 128, 0.36);
+    --label: #ffffff;
+    --label-2: rgba(235, 235, 245, 0.62);
+    --label-3: rgba(235, 235, 245, 0.32);
+    --sep: rgba(84, 84, 88, 0.6);
+    --tint: #0a84ff;
+    --red: #ff453a;
+    --green: #30d158;
+    --bar: rgba(22, 22, 24, 0.8);
+    --switch-off: #39393d;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-lift: 0 2px 8px rgba(0, 0, 0, 0.5), 0 20px 44px rgba(0, 0, 0, 0.5);
+    --c-teal: #40c8e0; --c-orange: #ff9f0a; --c-purple: #bf5af2; --c-green: #30d158; --c-indigo: #5e5ce6;
+    --c-pink: #ff375f; --c-yellow: #ffd60a; --c-blue: #0a84ff; --c-red: #ff453a; --c-brown: #ac8e68;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--label);
+  font: 17px/1.29 var(--font);
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+::selection { background: color-mix(in srgb, var(--tint) 28%, transparent); }
+input, textarea, select { caret-color: var(--tint); }
+a { color: var(--tint); text-decoration: none; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--tint) 55%, transparent); outline-offset: 2px; border-radius: 6px; }
+button { font: inherit; color: inherit; }
+img { display: block; }
+.num { font-variant-numeric: tabular-nums; }
+.code { font-family: var(--mono); font-size: 0.82em; letter-spacing: 0; color: var(--label-2); }
+.muted { color: var(--label-2); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Type scale (iOS) */
+.large-title { font: 700 34px/1.2 var(--font-display); letter-spacing: 0.012em; margin: 0; }
+.title-2 { font: 700 22px/1.27 var(--font-display); letter-spacing: 0.016em; margin: 0; }
+.title-3 { font: 600 20px/1.25 var(--font-display); margin: 0; }
+.headline { font-weight: 600; }
+.footnote { font-size: 13px; line-height: 1.38; letter-spacing: -0.006em; }
+.caption { font-size: 12px; line-height: 1.33; letter-spacing: 0; }
+
+/* Page */
+.page { padding: 0 16px calc(var(--tabbar-h) + 28px); max-width: 980px; margin: 0 auto; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin: 28px 4px 10px; }
+.section-head h2 { font: 700 22px/1.27 var(--font-display); margin: 0; letter-spacing: 0.01em; }
+.section-head a { font-size: 17px; }
+
+/* Inset grouped lists */
+.group-label { margin: 26px 16px 7px; font-size: 13px; text-transform: uppercase; color: var(--label-2); letter-spacing: 0; }
+.group-foot { margin: 7px 16px 0; font-size: 13px; color: var(--label-2); }
+.group { background: var(--bg-2); border-radius: var(--r-group); overflow: hidden; }
+.row {
+  display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 16px;
+  position: relative; color: var(--label); background: transparent; border: 0; width: 100%; text-align: left;
+}
+.row + .row::before { content: ''; position: absolute; top: 0; left: var(--inset, 16px); right: 0; height: 0.5px; background: var(--sep); }
+a.row:active, button.row:active { background: var(--fill); }
+.row .grow { flex: 1; min-width: 0; }
+.row .detail { color: var(--label-2); }
+.row .chev { color: var(--label-3); flex: none; }
+.row .sub { font-size: 15px; color: var(--label-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row input, .row select, .row textarea { border: 0; background: transparent; font: inherit; color: var(--label); outline: none; min-width: 0; }
+.row input { flex: 1; text-align: right; }
+.row input.switch, .row input[type='checkbox'] { flex: none; }
+.row input.left { text-align: left; }
+.row textarea { flex: 1; resize: vertical; min-height: 66px; padding: 0; }
+.row select { text-align: right; direction: rtl; color: var(--label-2); appearance: none; }
+.row .lbl { flex: none; }
+.row.danger { color: var(--red); justify-content: center; }
+.row.action { color: var(--tint); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 50px; padding: 0 20px; border-radius: 14px; border: 0;
+  background: var(--tint); color: #fff; font-weight: 600; font-size: 17px; cursor: pointer;
+  transition: transform 0.15s var(--ease), opacity 0.15s;
+}
+.btn:active { transform: scale(0.97); opacity: 0.85; }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn.block { width: 100%; }
+.btn.gray { background: var(--fill); color: var(--tint); }
+.btn.plain { background: transparent; color: var(--tint); padding: 0 8px; height: 44px; }
+.btn.small { height: 34px; padding: 0 14px; border-radius: 17px; font-size: 15px; }
+.btn.danger { background: color-mix(in srgb, var(--red) 14%, transparent); color: var(--red); }
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 18px; border: 0; display: grid; place-items: center;
+  background: var(--fill); color: var(--tint); cursor: pointer; flex: none;
+}
+.icon-btn.tinted { background: var(--tint); color: #fff; }
+
+/* Fields outside groups */
+.field {
+  width: 100%; height: 44px; border-radius: var(--r-ctl); border: 0; background: var(--bg-2);
+  padding: 0 14px; font: inherit; color: var(--label);
+}
+.search-field {
+  display: flex; align-items: center; gap: 6px; height: 38px; border-radius: 10px; background: var(--fill);
+  padding: 0 10px; color: var(--label-2);
+}
+.search-field input { flex: 1; border: 0; background: transparent; font: inherit; color: var(--label); outline: none; min-width: 0; }
+.search-field input::placeholder { color: var(--label-2); }
+
+/* Segmented control */
+.segmented { display: flex; background: var(--fill); border-radius: 9px; padding: 2px; }
+.segmented button { flex: 1; border: 0; background: transparent; height: 30px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; }
+.segmented button[aria-pressed='true'] { background: var(--bg-2); box-shadow: 0 3px 8px rgba(0,0,0,.12), 0 3px 1px rgba(0,0,0,.04); }
+@media (prefers-color-scheme: dark) { .segmented button[aria-pressed='true'] { background: #636366; } }
+
+/* Switch */
+.switch { appearance: none; width: 51px; height: 31px; border-radius: 16px; background: var(--switch-off); position: relative; cursor: pointer; transition: background 0.2s; flex: none; margin: 0; }
+.switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15), 0 3px 1px rgba(0,0,0,.06); transition: transform 0.25s var(--ease); }
+.switch:checked { background: var(--green); }
+.switch:checked::after { transform: translateX(20px); }
+
+/* Thumbs */
+.thumb { width: 44px; height: 44px; border-radius: 9px; object-fit: cover; background: var(--fill); flex: none; }
+.thumb.ph { display: grid; place-items: center; color: var(--label-3); }
+
+/* Location color helpers */
+[data-color='teal'] { --loc: var(--c-teal); } [data-color='orange'] { --loc: var(--c-orange); }
+[data-color='purple'] { --loc: var(--c-purple); } [data-color='green'] { --loc: var(--c-green); }
+[data-color='indigo'] { --loc: var(--c-indigo); } [data-color='pink'] { --loc: var(--c-pink); }
+[data-color='yellow'] { --loc: var(--c-yellow); } [data-color='blue'] { --loc: var(--c-blue); }
+[data-color='red'] { --loc: var(--c-red); } [data-color='brown'] { --loc: var(--c-brown); }
+/* The solid form of a place's color: lightness capped so white labels stay readable. Used for every filled surface. */
+[data-color] { --loc-solid: color-mix(in srgb, var(--loc) 64%, #000); --loc-solid: oklch(from var(--loc) min(l, 0.54) c h); }
+[data-color='yellow'] { --loc-solid: var(--loc); }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--loc-solid, var(--label-3)); flex: none; }
+
+.empty { text-align: center; padding: 36px 24px; color: var(--label-2); }
+.empty h3 { color: var(--label); font: 600 20px/1.25 var(--font-display); margin: 12px 0 6px; }
+.error-text { color: var(--red); font-size: 15px; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--fill-2); border-radius: 10px; border: 3px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-track { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

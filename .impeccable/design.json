@@ -1,0 +1,689 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-09T01:26:07+00:00",
+  "title": "Design System: Storage",
+  "extensions": {
+    "colorMeta": {
+      "tint": {
+        "role": "primary",
+        "displayName": "System Tint Blue",
+        "canonical": "#007aff",
+        "tonalRamp": [
+          "oklch(15% 0.110 258)",
+          "oklch(27% 0.110 258)",
+          "oklch(39% 0.200 258)",
+          "oklch(51% 0.200 258)",
+          "oklch(63% 0.200 258)",
+          "oklch(75% 0.200 258)",
+          "oklch(85% 0.110 258)",
+          "oklch(95% 0.110 258)"
+        ],
+        "dark": "#0a84ff"
+      },
+      "place-teal": {
+        "role": "secondary",
+        "displayName": "Place Teal",
+        "canonical": "#30b0c7",
+        "tonalRamp": [
+          "oklch(15% 0.061 215)",
+          "oklch(27% 0.061 215)",
+          "oklch(39% 0.110 215)",
+          "oklch(51% 0.110 215)",
+          "oklch(63% 0.110 215)",
+          "oklch(75% 0.110 215)",
+          "oklch(85% 0.061 215)",
+          "oklch(95% 0.061 215)"
+        ],
+        "dark": "#40c8e0",
+        "solid": "oklch(from var(--loc) min(l, 0.54) c h)"
+      },
+      "place-orange": {
+        "role": "secondary",
+        "displayName": "Place Orange",
+        "canonical": "#ff9500",
+        "tonalRamp": [
+          "oklch(15% 0.099 64)",
+          "oklch(27% 0.099 64)",
+          "oklch(39% 0.180 64)",
+          "oklch(51% 0.180 64)",
+          "oklch(63% 0.180 64)",
+          "oklch(75% 0.180 64)",
+          "oklch(85% 0.099 64)",
+          "oklch(95% 0.099 64)"
+        ],
+        "dark": "#ff9f0a",
+        "solid": "oklch(from var(--loc) min(l, 0.54) c h)"
+      },
+      "place-purple": {
+        "role": "secondary",
+        "displayName": "Place Purple",
+        "canonical": "#af52de",
+        "tonalRamp": [
+          "oklch(15% 0.110 310)",
+          "oklch(27% 0.110 310)",
+          "oklch(39% 0.200 310)",
+          "oklch(51% 0.200 310)",
+          "oklch(63% 0.200 310)",
+          "oklch(75% 0.200 310)",
+          "oklch(85% 0.110 310)",
+          "oklch(95% 0.110 310)"
+        ],
+        "dark": "#bf5af2",
+        "solid": "oklch(from var(--loc) min(l, 0.54) c h)"
+      },
+      "place-green": {
+        "role": "secondary",
+        "displayName": "Place Green",
+        "canonical": "#34c759",
+        "tonalRamp": [
+          "oklch(15% 0.099 148)",
+          "oklch(27% 0.099 148)",
+          "oklch(39% 0.180 148)",
+          "oklch(51% 0.180 148)",
+          "oklch(63% 0.180 148)",
+          "oklch(75% 0.180 148)",
+          "oklch(85% 0.099 148)",
+          "oklch(95% 0.099 148)"
+        ],
+        "dark": "#30d158",
+        "solid": "oklch(from var(--loc) min(l, 0.54) c h)"
+      },
+      "place-indigo": {
+        "role": "secondary",
+        "displayName": "Place Indigo",
+        "canonical": "#5856d6",
+        "tonalRamp": [
+          "oklch(15% 0.105 280)",
+          "oklch(27% 0.105 280)",
+          "oklch(39% 0.190 280)",
+          "oklch(51% 0.190 280)",
+          "oklch(63% 0.190 280)",
+          "oklch(75% 0.190 280)",
+          "oklch(85% 0.105 280)",
+          "oklch(95% 0.105 280)"
+        ],
+        "dark": "#5e5ce6",
+        "solid": "oklch(from var(--loc) min(l, 0.54) c h)"
+      },
+      "place-pink": {
+        "role": "secondary",
+        "displayName": "Place Pink",
+        "canonical": "#ff2d55",
+        "tonalRamp": [
+          "oklch(15% 0.127 15)",
+          "oklch(27% 0.127 15)",
+          "oklch(39% 0.230 15)",
+          "oklch(51% 0.230 15)",
+          "oklch(63% 0.230 15)",
+          "oklch(75% 0.230 15)",
+          "oklch(85% 0.127 15)",
+          "oklch(95% 0.127 15)"
+        ],
+        "dark": "#ff375f",
+        "solid": "oklch(from var(--loc) min(l, 0.54) c h)"
+      },
+      "place-yellow": {
+        "role": "secondary",
+        "displayName": "Place Yellow",
+        "canonical": "#ffcc00",
+        "tonalRamp": [
+          "oklch(15% 0.094 92)",
+          "oklch(27% 0.094 92)",
+          "oklch(39% 0.170 92)",
+          "oklch(51% 0.170 92)",
+          "oklch(63% 0.170 92)",
+          "oklch(75% 0.170 92)",
+          "oklch(85% 0.094 92)",
+          "oklch(95% 0.094 92)"
+        ],
+        "dark": "#ffd60a",
+        "solid": "var(--loc) with yellow-ink text"
+      },
+      "place-blue": {
+        "role": "secondary",
+        "displayName": "Place Blue",
+        "canonical": "#007aff",
+        "tonalRamp": [
+          "oklch(15% 0.110 258)",
+          "oklch(27% 0.110 258)",
+          "oklch(39% 0.200 258)",
+          "oklch(51% 0.200 258)",
+          "oklch(63% 0.200 258)",
+          "oklch(75% 0.200 258)",
+          "oklch(85% 0.110 258)",
+          "oklch(95% 0.110 258)"
+        ],
+        "dark": "#0a84ff",
+        "solid": "oklch(from var(--loc) min(l, 0.54) c h)"
+      },
+      "place-red": {
+        "role": "secondary",
+        "displayName": "Place Red",
+        "canonical": "#ff3b30",
+        "tonalRamp": [
+          "oklch(15% 0.121 29)",
+          "oklch(27% 0.121 29)",
+          "oklch(39% 0.220 29)",
+          "oklch(51% 0.220 29)",
+          "oklch(63% 0.220 29)",
+          "oklch(75% 0.220 29)",
+          "oklch(85% 0.121 29)",
+          "oklch(95% 0.121 29)"
+        ],
+        "dark": "#ff453a",
+        "solid": "oklch(from var(--loc) min(l, 0.54) c h)"
+      },
+      "place-brown": {
+        "role": "secondary",
+        "displayName": "Place Brown",
+        "canonical": "#a2845e",
+        "tonalRamp": [
+          "oklch(15% 0.033 70)",
+          "oklch(27% 0.033 70)",
+          "oklch(39% 0.060 70)",
+          "oklch(51% 0.060 70)",
+          "oklch(63% 0.060 70)",
+          "oklch(75% 0.060 70)",
+          "oklch(85% 0.033 70)",
+          "oklch(95% 0.033 70)"
+        ],
+        "dark": "#ac8e68",
+        "solid": "oklch(from var(--loc) min(l, 0.54) c h)"
+      },
+      "yellow-ink": {
+        "role": "secondary",
+        "displayName": "Yellow Ink",
+        "canonical": "#2e2300",
+        "tonalRamp": [
+          "oklch(15% 0.028 92)",
+          "oklch(27% 0.028 92)",
+          "oklch(39% 0.050 92)",
+          "oklch(51% 0.050 92)",
+          "oklch(63% 0.050 92)",
+          "oklch(75% 0.050 92)",
+          "oklch(85% 0.028 92)",
+          "oklch(95% 0.028 92)"
+        ]
+      },
+      "destructive-red": {
+        "role": "tertiary",
+        "displayName": "Destructive Red",
+        "canonical": "#ff3b30",
+        "tonalRamp": [
+          "oklch(15% 0.121 29)",
+          "oklch(27% 0.121 29)",
+          "oklch(39% 0.220 29)",
+          "oklch(51% 0.220 29)",
+          "oklch(63% 0.220 29)",
+          "oklch(75% 0.220 29)",
+          "oklch(85% 0.121 29)",
+          "oklch(95% 0.121 29)"
+        ],
+        "dark": "#ff453a"
+      },
+      "success-green": {
+        "role": "tertiary",
+        "displayName": "Success Green",
+        "canonical": "#34c759",
+        "tonalRamp": [
+          "oklch(15% 0.099 148)",
+          "oklch(27% 0.099 148)",
+          "oklch(39% 0.180 148)",
+          "oklch(51% 0.180 148)",
+          "oklch(63% 0.180 148)",
+          "oklch(75% 0.180 148)",
+          "oklch(85% 0.099 148)",
+          "oklch(95% 0.099 148)"
+        ],
+        "dark": "#30d158"
+      },
+      "grouped-background": {
+        "role": "neutral",
+        "displayName": "Grouped Background",
+        "canonical": "#f2f2f7",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "dark": "#000000"
+      },
+      "grouped-surface": {
+        "role": "neutral",
+        "displayName": "Grouped Surface",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "dark": "#1c1c1e"
+      },
+      "label": {
+        "role": "neutral",
+        "displayName": "Label",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "dark": "#ffffff"
+      },
+      "label-secondary": {
+        "role": "neutral",
+        "displayName": "Secondary Label",
+        "canonical": "rgba(60, 60, 67, 0.62)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "dark": "rgba(235, 235, 245, 0.62)"
+      },
+      "label-tertiary": {
+        "role": "neutral",
+        "displayName": "Tertiary Label",
+        "canonical": "rgba(60, 60, 67, 0.36)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "dark": "rgba(235, 235, 245, 0.32)"
+      },
+      "separator": {
+        "role": "neutral",
+        "displayName": "Separator",
+        "canonical": "rgba(60, 60, 67, 0.18)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "dark": "rgba(84, 84, 88, 0.6)"
+      },
+      "fill": {
+        "role": "neutral",
+        "displayName": "Fill",
+        "canonical": "rgba(120, 120, 128, 0.12)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "dark": "rgba(118, 118, 128, 0.24)"
+      },
+      "fill-strong": {
+        "role": "neutral",
+        "displayName": "Fill Strong",
+        "canonical": "rgba(120, 120, 128, 0.2)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "dark": "rgba(118, 118, 128, 0.36)"
+      },
+      "bar-material": {
+        "role": "neutral",
+        "displayName": "Bar Material",
+        "canonical": "rgba(249, 249, 249, 0.82)",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ],
+        "dark": "rgba(22, 22, 24, 0.8)"
+      },
+      "thermal-black": {
+        "role": "neutral",
+        "displayName": "Thermal Black",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ]
+      },
+      "thermal-white": {
+        "role": "neutral",
+        "displayName": "Thermal White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(27% 0.003 286)",
+          "oklch(39% 0.005 286)",
+          "oklch(51% 0.005 286)",
+          "oklch(63% 0.005 286)",
+          "oklch(75% 0.005 286)",
+          "oklch(85% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "large-title": {
+        "displayName": "Large Title",
+        "purpose": "In-page title on top-level screens; hands off to the bar title on scroll."
+      },
+      "hero-title": {
+        "displayName": "Hero Title",
+        "purpose": "Record name inside location and box heroes (items use 26px)."
+      },
+      "title-2": {
+        "displayName": "Title 2",
+        "purpose": "Section heads and the desktop brand."
+      },
+      "title-3": {
+        "displayName": "Title 3",
+        "purpose": "Empty-state headings."
+      },
+      "tile-name": {
+        "displayName": "Tile Name",
+        "purpose": "Place name on a location tile."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Rows, fields, back links."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Buttons, bar titles, emphasized row text."
+      },
+      "subhead": {
+        "displayName": "Subhead",
+        "purpose": "Row subtitles, small buttons, toasts, chips."
+      },
+      "footnote": {
+        "displayName": "Footnote",
+        "purpose": "Group labels and footers, tile counts, segmented items."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Badges and codes inside tiles."
+      },
+      "tab-label": {
+        "displayName": "Tab Label",
+        "purpose": "Tab bar labels only."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "Human-readable box and item codes."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow",
+        "value": "0 1px 2px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(0, 0, 0, 0.06)",
+        "dark": "0 1px 2px rgba(0, 0, 0, 0.4)",
+        "purpose": "Resting lift for tiles, box tiles, heroes, cards, photo cells."
+      },
+      {
+        "name": "shadow-lift",
+        "value": "0 2px 6px rgba(0, 0, 0, 0.08), 0 18px 40px rgba(0, 0, 0, 0.12)",
+        "dark": "0 2px 8px rgba(0, 0, 0, 0.5), 0 20px 44px rgba(0, 0, 0, 0.5)",
+        "purpose": "Tile hover on pointer devices and floating toasts."
+      },
+      {
+        "name": "tile-gloss",
+        "value": "inset 0 1px 0 rgba(255, 255, 255, 0.22)",
+        "purpose": "Top highlight on location tiles, paired with a 160deg 7%-white to 12%-black wash."
+      },
+      {
+        "name": "control-knob",
+        "value": "0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04)",
+        "purpose": "Selected segment and switch thumb."
+      },
+      {
+        "name": "bar-material",
+        "value": "backdrop-filter: saturate(180%) blur(20px)",
+        "purpose": "Scrolled nav bar and tab bar; toasts use blur(24px)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "The one spring-like ease for presses, sheets, toasts, bar titles and view transitions."
+      },
+      {
+        "name": "press",
+        "value": "transform 0.15s; scale(0.97) buttons, scale(0.96) location tiles",
+        "purpose": "Press feedback."
+      },
+      {
+        "name": "view-transition",
+        "value": "0.42s cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Tile-to-record morph via matching loc-N / box-N / item-N names; scan reticle into hero."
+      },
+      {
+        "name": "sheet-rise",
+        "value": "0.45s translateY(40%) to 0 with fade",
+        "purpose": "Sheet entrance; backdrop fades over 0.3s."
+      },
+      {
+        "name": "toast-rise",
+        "value": "0.42s translateY(14px) scale(0.98) blur(4px) to rest",
+        "purpose": "Toast entrance."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "durations 0.01ms; view transitions skipped",
+        "purpose": "Honors prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tiles-3up",
+        "value": "640px"
+      },
+      {
+        "name": "sheet-centered",
+        "value": "700px"
+      },
+      {
+        "name": "sidebar",
+        "value": "900px"
+      },
+      {
+        "name": "tiles-4up",
+        "value": "1100px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Filled tint action; presses down rather than lighting up.",
+      "html": "<button class=\"ds-btn\">Save Item</button>",
+      "css": ".ds-btn{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:14px;border:0;background:var(--tint,#007aff);color:#fff;font-weight:600;font-size:17px;letter-spacing:-0.01em;cursor:pointer;transition:transform .15s cubic-bezier(0.22, 1, 0.36, 1),opacity .15s}.ds-btn:active{transform:scale(.97);opacity:.85}.ds-btn:focus-visible{outline:3px solid color-mix(in srgb,var(--tint,#007aff) 55%,transparent);outline-offset:2px}.ds-btn:disabled{opacity:.4}"
+    },
+    {
+      "name": "Gray Button",
+      "kind": "button",
+      "refersTo": "button-gray",
+      "description": "Secondary action on a translucent gray fill with tint text.",
+      "html": "<button class=\"ds-btn-gray\">Move</button>",
+      "css": ".ds-btn-gray{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;height:50px;padding:0 20px;border-radius:14px;border:0;background:var(--fill,rgba(120,120,128,.12));color:var(--tint,#007aff);font-weight:600;font-size:17px;cursor:pointer;transition:transform .15s cubic-bezier(0.22, 1, 0.36, 1),opacity .15s}.ds-btn-gray:active{transform:scale(.97);opacity:.85}.ds-btn-gray:focus-visible{outline:3px solid color-mix(in srgb,var(--tint,#007aff) 55%,transparent);outline-offset:2px}"
+    },
+    {
+      "name": "Location Tile",
+      "kind": "card",
+      "refersTo": "location-tile",
+      "description": "Signature Home-app tile: a slab of the place's deepened solid color with glyph, name and counts.",
+      "html": "<a class=\"ds-tile\" href=\"#\" style=\"--loc:#30b0c7\"><span class=\"ds-tile-glyph\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 20V9l9-5 9 5v11M6.5 20v-8.5h11V20M6.5 14.5h11M6.5 17.5h11\"/></svg></span><span class=\"ds-tile-name\">Garage</span><span class=\"ds-tile-meta\">12 boxes · 148 items</span></a>",
+      "css": ".ds-tile{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;width:180px;aspect-ratio:1.12;padding:14px 15px;border-radius:22px;color:#fff;overflow:hidden;text-decoration:none;--loc-solid:color-mix(in srgb,var(--loc) 64%,#000);--loc-solid:oklch(from var(--loc) min(l,.54) c h);background:var(--loc-solid);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 1px 2px rgba(0,0,0,.06),0 6px 18px rgba(0,0,0,.06);transition:transform .25s cubic-bezier(0.22, 1, 0.36, 1),box-shadow .25s cubic-bezier(0.22, 1, 0.36, 1)}.ds-tile::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(0,0,0,.12));pointer-events:none}.ds-tile:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 2px 6px rgba(0,0,0,.08),0 18px 40px rgba(0,0,0,.12)}.ds-tile:active{transform:scale(.96)}.ds-tile:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:2px}.ds-tile-glyph{position:absolute;top:13px;left:13px;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.22)}.ds-tile-name{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',system-ui,sans-serif;font-weight:600;font-size:19px;line-height:1.15;letter-spacing:.01em;position:relative;z-index:1}.ds-tile-meta{font-size:13px;font-weight:500;position:relative;z-index:1;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Location Tile (Yellow)",
+      "kind": "card",
+      "refersTo": "location-tile-yellow",
+      "description": "The yellow exception: raw light fill with dark yellow ink.",
+      "html": "<a class=\"ds-tile-y\" href=\"#\"><span class=\"ds-tile-y-glyph\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 20V9l9-5 9 5v11M6.5 20v-8.5h11V20M6.5 14.5h11M6.5 17.5h11\"/></svg></span><span class=\"ds-tile-y-name\">Attic</span><span class=\"ds-tile-y-meta\">4 boxes · 31 items</span></a>",
+      "css": ".ds-tile-y{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;width:180px;aspect-ratio:1.12;padding:14px 15px;border-radius:22px;color:#2e2300;background:#ffcc00;text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 1px 2px rgba(0,0,0,.06),0 6px 18px rgba(0,0,0,.06);transition:transform .25s cubic-bezier(0.22, 1, 0.36, 1)}.ds-tile-y:hover{transform:translateY(-2px)}.ds-tile-y:active{transform:scale(.96)}.ds-tile-y:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:2px}.ds-tile-y-glyph{position:absolute;top:13px;left:13px;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(0,0,0,.1)}.ds-tile-y-name{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',system-ui,sans-serif;font-weight:600;font-size:19px;line-height:1.15}.ds-tile-y-meta{font-size:13px;font-weight:500}"
+    },
+    {
+      "name": "Box Tile",
+      "kind": "card",
+      "refersTo": "box-tile",
+      "description": "Surface card with a place-tinted 4:3 cover, count pill, name and place dot.",
+      "html": "<a class=\"ds-box\" href=\"#\" style=\"--loc:#ff9500\"><div class=\"ds-box-cover\"><span class=\"ds-box-ph\"><svg width=\"30\" height=\"30\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3.5 7.5 12 3.5l8.5 4v9L12 20.5l-8.5-4zM3.5 7.5 12 11.5l8.5-4M12 11.5v9M7.8 5.5l8.4 4\"/></svg></span><span class=\"ds-box-count\">9</span></div><div class=\"ds-box-txt\"><span class=\"ds-box-name\">Camping Gear</span><span class=\"ds-box-meta\"><span class=\"ds-dot\"></span>Garage</span></div></a>",
+      "css": ".ds-box{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:flex;flex-direction:column;width:156px;background:var(--bg-2,#fff);border-radius:18px;overflow:hidden;color:var(--label,#000);text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.06),0 6px 18px rgba(0,0,0,.06);transition:transform .25s cubic-bezier(0.22, 1, 0.36, 1);--loc-solid:oklch(from var(--loc) min(l,.54) c h)}.ds-box:active{transform:scale(.97)}.ds-box:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:2px}.ds-box-cover{position:relative;aspect-ratio:4/3;background:color-mix(in srgb,var(--loc) 26%,#fff)}.ds-box-ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--loc-solid)}.ds-box-count{position:absolute;right:8px;bottom:8px;min-width:26px;height:26px;padding:0 8px;border-radius:13px;background:rgba(0,0,0,.55);color:#fff;font-size:13px;font-weight:600;display:grid;place-items:center;font-variant-numeric:tabular-nums}.ds-box-txt{display:flex;flex-direction:column;gap:2px;padding:9px 12px 11px}.ds-box-name{font-weight:600;font-size:16px}.ds-box-meta{display:flex;align-items:center;gap:5px;font-size:13px;color:rgba(60,60,67,.62)}.ds-dot{width:8px;height:8px;border-radius:50%;background:var(--loc-solid)}"
+    },
+    {
+      "name": "Inset Grouped List",
+      "kind": "custom",
+      "refersTo": "grouped-list",
+      "description": "The reading surface: uppercase footnote group label, white group, 44px rows with inset hairlines.",
+      "html": "<div class=\"ds-gl\"><div class=\"ds-gl-label\">Details</div><div class=\"ds-gl-group\"><a class=\"ds-gl-row\" href=\"#\"><span class=\"ds-gl-grow\">Quantity</span><span class=\"ds-gl-detail\">2</span><span class=\"ds-gl-chev\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9.5 5.5 16 12l-6.5 6.5\"/></svg></span></a><a class=\"ds-gl-row\" href=\"#\"><span class=\"ds-gl-grow\">Box</span><span class=\"ds-gl-detail\">Camping Gear</span><span class=\"ds-gl-chev\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9.5 5.5 16 12l-6.5 6.5\"/></svg></span></a></div></div>",
+      "css": ".ds-gl{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;background:var(--bg,#f2f2f7);padding:4px 16px 16px;width:340px;font-size:17px;letter-spacing:-.01em}.ds-gl-label{margin:16px 16px 7px;font-size:13px;text-transform:uppercase;color:rgba(60,60,67,.62)}.ds-gl-group{background:var(--bg-2,#fff);border-radius:12px;overflow:hidden}.ds-gl-row{display:flex;align-items:center;gap:12px;min-height:44px;padding:10px 16px;position:relative;color:var(--label,#000);text-decoration:none}.ds-gl-row+.ds-gl-row::before{content:'';position:absolute;top:0;left:16px;right:0;height:.5px;background:rgba(60,60,67,.18)}.ds-gl-row:active{background:rgba(120,120,128,.12)}.ds-gl-row:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:-3px}.ds-gl-grow{flex:1}.ds-gl-detail{color:rgba(60,60,67,.62)}.ds-gl-chev{color:rgba(60,60,67,.36);display:grid}"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "38px fill-gray search with magnifier, tint caret.",
+      "html": "<label class=\"ds-search\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.3 15.3 20 20\"/></svg><input placeholder=\"Search items, boxes, places\" /></label>",
+      "css": ".ds-search{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:flex;align-items:center;gap:6px;width:320px;height:38px;border-radius:10px;background:var(--fill,rgba(120,120,128,.12));padding:0 10px;color:rgba(60,60,67,.62)}.ds-search input{flex:1;border:0;background:transparent;font:inherit;font-size:17px;color:var(--label,#000);outline:none;caret-color:#007aff;min-width:0}.ds-search input::placeholder{color:rgba(60,60,67,.62)}.ds-search:focus-within{outline:3px solid rgba(0,122,255,.55);outline-offset:2px}"
+    },
+    {
+      "name": "Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab-bar",
+      "description": "Translucent material tab bar with the prominent center Scan capsule.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab on\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3.5 11 12 4l8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20\"/></svg></span>Home</a><a class=\"ds-tab\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.3 15.3 20 20\"/></svg></span>Search</a><a class=\"ds-tab ds-tab-p\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M4 12h16\"/></svg></span>Scan</a><a class=\"ds-tab\" href=\"#\"><span class=\"ds-tab-i\"><svg width=\"25\" height=\"25\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1.4 1.4 0 0 1 0 2l-6.7 6.7a1.4 1.4 0 0 1-2 0zM8 8h.01\"/></svg></span>Labels</a></nav>",
+      "css": ".ds-tabs{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:grid;grid-template-columns:repeat(4,1fr);width:360px;height:56px;background:rgba(249,249,249,.82);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid rgba(60,60,67,.18)}.ds-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:rgba(60,60,67,.62);font-size:10px;font-weight:500;letter-spacing:.01em;text-decoration:none}.ds-tab.on,.ds-tab:hover{color:#007aff}.ds-tab:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:-3px}.ds-tab-i{display:grid;place-items:center;height:28px}.ds-tab-p .ds-tab-i{width:46px;height:32px;border-radius:16px;background:#007aff;color:#fff;margin-top:-2px}"
+    },
+    {
+      "name": "Toast",
+      "kind": "custom",
+      "description": "Floating material toast with status glyph and pill action; follows print jobs live.",
+      "html": "<div class=\"ds-toast\"><span class=\"ds-toast-ic\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12.5 10 17.5 19 7\"/></svg></span><span class=\"ds-toast-t\">Label printed</span><button class=\"ds-toast-a\">Undo</button></div>",
+      "css": ".ds-toast{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;display:flex;align-items:center;gap:10px;width:340px;min-height:50px;padding:8px 8px 8px 16px;border-radius:16px;background:color-mix(in srgb,#fff 86%,transparent);backdrop-filter:saturate(180%) blur(24px);box-shadow:0 2px 6px rgba(0,0,0,.08),0 18px 40px rgba(0,0,0,.12);font-size:15px;font-weight:500}.ds-toast-ic{color:#34c759;display:grid}.ds-toast-t{flex:1}.ds-toast-a{border:0;background:rgba(120,120,128,.12);color:#007aff;font:inherit;font-weight:600;height:34px;padding:0 14px;border-radius:17px;cursor:pointer}.ds-toast-a:active{opacity:.7}.ds-toast-a:focus-visible{outline:3px solid rgba(0,122,255,.55);outline-offset:2px}"
+    },
+    {
+      "name": "Label Preview",
+      "kind": "custom",
+      "refersTo": "label-preview",
+      "description": "Print proof: pure black ink on white stock, matching the thermal printer.",
+      "html": "<svg class=\"ds-label\" viewBox=\"0 0 406 203\" role=\"img\" aria-label=\"Label preview\"><rect width=\"406\" height=\"203\" fill=\"#fff\"/><text x=\"20\" y=\"60\" font-size=\"44\" font-weight=\"700\" font-family=\"Helvetica Neue, Arial Narrow, Arial, sans-serif\" fill=\"#000\">Camping Gear</text><text x=\"20\" y=\"104\" font-size=\"26\" font-weight=\"700\" font-family=\"Helvetica Neue, Arial, sans-serif\" fill=\"#000\">Garage</text><rect x=\"20\" y=\"130\" width=\"200\" height=\"50\" fill=\"#000\"/><text x=\"32\" y=\"165\" font-size=\"28\" font-weight=\"700\" font-family=\"Helvetica Neue, Arial, sans-serif\" fill=\"#fff\">B12</text><rect x=\"276\" y=\"73\" width=\"110\" height=\"110\" fill=\"none\" stroke=\"#000\" stroke-width=\"10\"/></svg>",
+      "css": ".ds-label{width:300px;height:auto;display:block;border-radius:10px;background:#fff;box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 10px 30px rgba(0,0,0,.14)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Household Home App",
+    "overview": "Storage speaks Apple's system grammar as its native tongue: the SF Pro stack, large titles that hand off to a translucent bar, inset grouped lists on grouped-gray, and sheets that rise from the bottom edge. Nothing is invented where iOS already has an answer; the app should feel like a first-party utility a household found already installed.\n\nThe one voice the system adds is place color. Every location owns a single system color, and that color follows the place everywhere it appears: its tile, the dot beside each box and item it holds, the tint behind a box's cover, the hero of the box's record. Colored tiles are the browsing surface; the grouped list is the reading surface. Density is phone-first and one-handed, with 44px minimum targets throughout.\n\nLight and dark follow the device; every token has a dark counterpart and nothing is designed for one mode only. Motion is short and springy, and its signature is continuity: a tile does not link to a page, it becomes the page.",
+    "keyCharacteristics": [
+      "System SF Pro stack only; no web fonts.",
+      "One system color per place, carried from tile to record.",
+      "Filled color surfaces use the deepened `--loc-solid`; tints use the raw `--loc`.",
+      "Inset grouped lists with hairline separators for reading and editing.",
+      "Translucent, blurred bars and toasts; opaque sheets over a dim scrim.",
+      "Large-title and hero headers whose bar title appears only on scroll.",
+      "View transitions morph a tile into its record.",
+      "The label preview is strictly black on white, because it is a print proof."
+    ],
+    "rules": [
+      {
+        "name": "The One Place, One Color Rule",
+        "body": "A location owns exactly one system hue, and every surface that belongs to that place inherits it through `data-color`. Never color a place's objects with anything but its own `--loc`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Solid Fill Rule",
+        "body": "Any filled surface carrying white text or a white glyph uses `--loc-solid`, never the raw `--loc`, so white holds 4.5:1. Yellow is the sole exception: it keeps its light fill and switches to `yellow-ink`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single Tint Rule",
+        "body": "Blue is for action. Place color never stands in for a button, and blue never stands in for a place (the blue place color is a place's identity, not a link).",
+        "section": "colors"
+      },
+      {
+        "name": "The System Face Rule",
+        "body": "Only the system stack renders UI text. The label preview's Helvetica Neue condensed rendering exists solely to match the printer's font and never leaks into the app chrome.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Count Rule",
+        "body": "Every count, quantity and badge number uses tabular figures (`.num`).",
+        "section": "typography"
+      },
+      {
+        "name": "The Material Bar Rule",
+        "body": "Bars are clear at rest under a large title and become `bar-material` with blur and a hairline only once content scrolls beneath them. The tab bar is always material.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** put a place's color on its objects through `data-color` and let `--loc` / `--loc-solid` resolve it.",
+      "**Do** use `--loc-solid` for every filled colored surface that carries white, and raw `--loc` only for washes of 26% or less and for mixed tint text.",
+      "**Do** give yellow its light fill with `yellow-ink` (#2e2300) text and a 10% black glyph wash.",
+      "**Do** read and edit in inset grouped lists: 44px rows, 0.5px inset separators, 13px uppercase group labels.",
+      "**Do** make tiles that open records carry a `view-transition-name` matching the record's hero.",
+      "**Do** keep bars clear at rest and material (82% plus `saturate(180%) blur(20px)`) once content scrolls under.",
+      "**Do** define every new color for both light and dark mode.",
+      "**Do** keep the label preview strictly #000 on #fff so it matches thermal print."
+    ],
+    "donts": [
+      "**Don't** fill a surface with raw `--loc` behind white text; deepen it to `--loc-solid` (yellow excepted).",
+      "**Don't** use place color for actions, or tint blue for place identity.",
+      "**Don't** load a web font or substitute a non-system display face in the app chrome.",
+      "**Don't** add color, gray, or tint to the label preview's ink or stock; editing chrome stays outside the printed marks.",
+      "**Don't** build dashboards of tables and gray cards for browsing; places and boxes browse as tiles."
+    ]
+  }
+}

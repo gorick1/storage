@@ -1,0 +1,132 @@
+{
+  "title": "Choose the visual world for Storage",
+  "question": "The roll assigned the All-Weather Field Book. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "All-Weather Field Book",
+      "kicker": "THE ROLL",
+      "lineage": "waterproof surveyor's field books: yellow covers, numbered pages, gridded level-book columns, an index up front",
+      "thesis": "Your storage, logged like a survey: every box a numbered page, every item a ruled line, built to be used in a dusty garage.",
+      "palette": ["#F2C200", "#1D1F16", "#FBFBF6", "#7FA59A", "#C8102E"],
+      "materials": ["safety-yellow cover stock", "survey grid ruling", "graphite pencil marks", "red index tabs"],
+      "viewport": "Phone: a yellow cover band with the current box number huge, the box's page below as a gridded list of item lines with photos, and a yellow thumb bar holding Scan and Add.",
+      "risk": "Committed yellow is loud; if the grid and type are timid it reads as a theme rather than a tool.",
+      "raised": [
+        {"from": "challenger-warm-consumer", "raise": "A persistent bottom bar keeps Scan and Add in thumb reach, and red is reserved strictly for what can be pressed."},
+        {"from": "challenger-star-atlas", "raise": "A low-light attic mode: dark page, amber pencil, the scanned record ringed so it reads under a headlamp."},
+        {"from": "challenger-centre-rail", "raise": "States are pencil marks, not badges: checked out is struck through with initials and date, a moved item carries a ruled arrow."},
+        {"from": "challenger-type-specimen", "raise": "Hierarchy by scale contrast alone: record numbers set enormous, everything else small and quiet."},
+        {"from": "challenger-character-goods", "raise": "Every item cell is a photo with a name plate and a one-line note ruled beneath it."},
+        {"from": "challenger-transit-map", "raise": "Labels and numbers are set at fixed sizes, never shrunk to fit; long names wrap instead."}
+      ],
+      "board": "https://impeccable.style/worlds/cards/digital-design-canon-warm-consumer-app-surface.webp"
+    },
+    {
+      "id": "model-pick",
+      "label": "Label Stock",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "die-cut thermal labels, ZPL printer fonts, Code 128 and QR grammar",
+      "thesis": "The app is made of the same thing it prints: every screen is a label on a liner.",
+      "palette": ["#FFFFFF", "#111111", "#E9E6DF", "#D4542B"],
+      "materials": ["die-cut label with rounded corners", "glassine liner", "thermal black", "barcode rules"],
+      "viewport": "Phone: records stacked as die-cut labels on a pale liner strip; the selected one peels up; Scan sits like the printer's feed button.",
+      "risk": "The literal reading of the product; monochrome can feel like a printout rather than an app."
+    },
+    {
+      "id": "challenger-warm-consumer",
+      "label": "Warm Consumer App",
+      "verdict": "competitive",
+      "lineage": "friendly consumer app canon",
+      "thesis": "Soft cards, friendly labels, one bright color only where you can press.",
+      "palette": ["#F6F0E8", "#FFFFFF", "#2F2A26", "#FF5A36"],
+      "materials": ["soft-cornered cards", "warm tinted ground"],
+      "viewport": "A single column of item cards with a persistent bottom bar.",
+      "case": "Holds clarity for a household on phones; loses on identity: it could be any app.",
+      "risk": "Familiar and pleasant, and forgettable.",
+      "hero": "https://impeccable.style/worlds/cards/digital-design-canon-warm-consumer-app-surface-hero.webp"
+    },
+    {
+      "id": "challenger-transit-map",
+      "label": "Midnight Transit Diagram",
+      "verdict": "declined",
+      "lineage": "metro wayfinding diagrams",
+      "thesis": "Locations as lines, boxes as stations.",
+      "palette": ["#14213D", "#F4F4F0", "#D62828", "#2A6FDB"],
+      "materials": ["enamel", "interchange rings"],
+      "viewport": "A line diagram of locations with boxes as stops.",
+      "case": "Storage has no routes; the metaphor costs clarity and nobody here thinks in lines.",
+      "kept": "Fixed-size labels that never shrink to fit.",
+      "risk": "Pure metaphor.",
+      "hero": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-midnight-transit-diagram-hero.webp"
+    },
+    {
+      "id": "challenger-star-atlas",
+      "label": "Star Atlas",
+      "verdict": "declined",
+      "lineage": "celestial charts read by red flashlight",
+      "thesis": "Items plotted as stars by importance.",
+      "palette": ["#0E1B33", "#F2F2EE", "#E0803A"],
+      "materials": ["chart plates", "night-vision red"],
+      "viewport": "A dark chart of the catalog.",
+      "case": "Beautiful, but finding a drill is not stargazing.",
+      "kept": "A low-light mode for dark attics.",
+      "risk": "Ornamental for a lookup tool.",
+      "hero": "https://impeccable.style/worlds/cards/notation-diagram-systems-star-atlas-hero.webp"
+    },
+    {
+      "id": "challenger-centre-rail",
+      "label": "Centre-Rail Reference Page",
+      "verdict": "declined",
+      "lineage": "wide-margin reference editions",
+      "thesis": "Records set as an annotated edition.",
+      "palette": ["#1A1A1A", "#EEE8DC", "#C23B22"],
+      "materials": ["hairline rules", "vermilion keys"],
+      "viewport": "Twin columns around a rail of record keys.",
+      "case": "Desktop reading world; wrong for one-handed phones in a garage.",
+      "kept": "States as printed marks instead of badges.",
+      "risk": "Too literary.",
+      "hero": "https://impeccable.style/worlds/cards/rw-centre-rail-reference-setting-hero.webp"
+    },
+    {
+      "id": "challenger-type-specimen",
+      "label": "Variable Type Specimen",
+      "verdict": "declined",
+      "lineage": "foundry specimen sites",
+      "thesis": "Hierarchy by scale alone.",
+      "palette": ["#FAFAF7", "#111111", "#3D5AFE"],
+      "materials": ["giant glyphs", "mono readouts"],
+      "viewport": "One giant number, small labels.",
+      "case": "No connection to storage beyond its discipline.",
+      "kept": "Enormous record numbers, everything else small.",
+      "risk": "Showpiece, not a tool.",
+      "hero": "https://impeccable.style/worlds/cards/variable-font-specimen-hero.webp"
+    },
+    {
+      "id": "challenger-character-goods",
+      "label": "Character Goods Catalog",
+      "verdict": "declined",
+      "lineage": "mascot merchandise catalogs",
+      "thesis": "Items as a cast of characters.",
+      "palette": ["#FCE4EC", "#E3F2FD", "#FFFFFF", "#FF7043"],
+      "materials": ["pastel grid", "name plates"],
+      "viewport": "A pastel grid of item portraits.",
+      "case": "Too cute for a garage tool, but its grid of portraits with captions fits item photos.",
+      "kept": "Photo cells with a name plate and a one-line note.",
+      "risk": "Toy-like.",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-character-goods-catalog-hero.webp"
+    }
+  ],
+  "reroll": {"registers": ["safer", "bolder"]},
+  "buildPath": {"value": "code"},
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "A clean home-inventory app like Sortly or Homebox, done impeccably.",
+    "palette": ["#FFFFFF", "#111827", "#2563EB"],
+    "materials": ["clean list and grid", "item photography"],
+    "viewport": "Tab bar, search on top, recent items as photo cards.",
+    "risk": "Indistinguishable from every other inventory app by design."
+  },
+  "steer": true
+}
