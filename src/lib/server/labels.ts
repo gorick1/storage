@@ -24,12 +24,12 @@ export function getStock(id: number): LabelStock | undefined {
 
 export function saveStock(s: Omit<LabelStock, 'id'> & { id?: number }): number {
   if (s.id) {
-    db.prepare('UPDATE label_stocks SET name = ?, width_in = ?, height_in = ?, dpi = ?, media = ?, method = ?, darkness = ? WHERE id = ?')
-      .run(s.name, s.width_in, s.height_in, s.dpi, s.media, s.method, s.darkness, s.id);
+    db.prepare('UPDATE label_stocks SET name = ?, width_in = ?, height_in = ?, dpi = ?, media = ?, method = ?, darkness = ?, speed = ? WHERE id = ?')
+      .run(s.name, s.width_in, s.height_in, s.dpi, s.media, s.method, s.darkness, s.speed ?? 3, s.id);
     return s.id;
   }
-  const r = db.prepare('INSERT INTO label_stocks (name, width_in, height_in, dpi, media, method, darkness, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-    .run(s.name, s.width_in, s.height_in, s.dpi, s.media, s.method, s.darkness, now());
+  const r = db.prepare('INSERT INTO label_stocks (name, width_in, height_in, dpi, media, method, darkness, speed, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .run(s.name, s.width_in, s.height_in, s.dpi, s.media, s.method, s.darkness, s.speed ?? 3, now());
   return Number(r.lastInsertRowid);
 }
 

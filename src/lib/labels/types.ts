@@ -18,6 +18,7 @@ export interface LabelStock {
   media: 'gap' | 'continuous' | 'mark';
   method: 'DT' | 'TT';
   darkness: number;
+  speed?: number; // inches per second, 2-6
 }
 
 export interface LabelTemplate {

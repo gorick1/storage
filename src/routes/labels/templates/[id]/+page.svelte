@@ -6,7 +6,7 @@
   import Icon from '$lib/components/Icon.svelte';
   import { toast } from '$lib/client/toast.svelte';
   import { FIELDS, dots, type LabelElement, type Align } from '$lib/labels/types';
-  import { renderZpl, barcodeModule } from '$lib/labels/zpl';
+  import { renderZpl, barcodeModule, fillCoverage } from '$lib/labels/zpl';
   import QRCode from 'qrcode';
 
   let { data } = $props();
@@ -48,6 +48,7 @@
         w.push(`${e.type === 'text' ? `“${e.text.slice(0, 20)}”` : 'An element'} runs past the label edge.`);
       }
     }
+    if (fillCoverage(stock, elements) > 0.08) w.push('Large solid black areas pull a lot of power and can make the printer reset. This label will print at the slowest speed; outlines are safer.');
     if (!elements.some((e) => e.type === 'qr')) w.push('No QR code. Phones won’t be able to open this record from the label.');
     return [...new Set(w)];
   });

@@ -40,9 +40,19 @@ export function elementZpl(el: LabelElement, data: LabelData): string {
   }
 }
 
+/** Share of the label covered by solid black. Big fills draw a lot of current from the printer's power supply. */
+export function fillCoverage(stock: LabelStock, elements: LabelElement[]): number {
+  const area = dots(stock.width_in, stock.dpi) * dots(stock.height_in, stock.dpi);
+  const black = elements.reduce((sum, e) => sum + (e.type === 'box' && e.fill ? e.w * e.h : 0), 0);
+  return area ? black / area : 0;
+}
+
 export function renderZpl(stock: LabelStock, elements: LabelElement[], data: LabelData, copies = 1): string {
   const w = dots(stock.width_in, stock.dpi);
   const h = dots(stock.height_in, stock.dpi);
+  // Slow down for heavy black areas so the printhead's current draw stays within the power supply.
+  const base = Math.max(2, Math.min(6, stock.speed ?? 3));
+  const speed = fillCoverage(stock, elements) > 0.08 ? 2 : base;
   const media = stock.media === 'continuous' ? 'N' : stock.media === 'mark' ? 'M' : 'Y';
   const head = [
     '^XA',
@@ -52,7 +62,9 @@ export function renderZpl(stock: LabelStock, elements: LabelElement[], data: Lab
     `^PW${w}`,
     `^LL${h}`,
     '^LH0,0',
-    `~SD${String(Math.max(0, Math.min(30, stock.darkness))).padStart(2, '0')}`
+    `^PR${speed},${speed},${speed}`,
+    // Darkness as a per-label offset from the printer's own setting (15 = no change). ~SD would rewrite the saved setting on every label.
+    `^MD${Math.max(-15, Math.min(15, Math.round(stock.darkness) - 15))}`
   ];
   return [...head, ...elements.map((e) => elementZpl(e, data)), `^PQ${Math.max(1, copies)}`, '^XZ'].join('\n');
 }

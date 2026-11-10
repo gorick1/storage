@@ -42,7 +42,8 @@ export const actions = {
       width_in: width, height_in: height, dpi,
       media: (['gap', 'continuous', 'mark'].includes(String(f.get('media'))) ? f.get('media') : 'gap') as 'gap',
       method: f.get('method') === 'TT' ? 'TT' : 'DT',
-      darkness: num(f.get('darkness'), 0, 30, 15)
+      darkness: num(f.get('darkness'), 0, 30, 15),
+      speed: num(f.get('speed'), 2, 6, 3)
     });
     return { saved: true };
   },

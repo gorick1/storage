@@ -28,8 +28,8 @@ export function defaultElements(kind: Kind, widthDots: number, heightDots: numbe
   const qrSize = 25 * qrMag;
   const textW = W - pad * 3 - qrSize;
   return [
-    { id: id(), type: 'box', x: pad, y: pad, w: W - pad * 2, h: Math.round(H * 0.2), thickness: 4, fill: true },
-    { id: id(), type: 'text', x: pad + 12, y: pad + Math.round(H * 0.04), w: W - pad * 2 - 24, h: Math.round(H * 0.14), text: '{name}', size: Math.round(H * 0.12), align: 'left', maxLines: 1, invert: true },
+    { id: id(), type: 'box', x: pad, y: pad, w: W - pad * 2, h: Math.round(H * 0.2), thickness: 5 },
+    { id: id(), type: 'text', x: pad + 12, y: pad + Math.round(H * 0.04), w: W - pad * 2 - 24, h: Math.round(H * 0.14), text: '{name}', size: Math.round(H * 0.12), align: 'left', maxLines: 1 },
     { id: id(), type: 'qr', x: W - pad - qrSize, y: pad + Math.round(H * 0.25), size: qrMag },
     { id: id(), type: 'text', x: pad, y: pad + Math.round(H * 0.25), w: textW, h: Math.round(H * 0.13), text: '{number}', size: Math.round(H * 0.11), align: 'left', maxLines: 1 },
     { id: id(), type: 'text', x: pad, y: pad + Math.round(H * 0.39), w: textW, h: Math.round(H * 0.07), text: kind === 'box' ? '{location} · {item_count} items' : '{item_count} items', size: Math.round(H * 0.06), align: 'left', maxLines: 1 },

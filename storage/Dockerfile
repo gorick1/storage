@@ -1,6 +1,6 @@
 # Home Assistant builds this add-on locally. It fetches the app source for the
 # release that matches this add-on's version, builds it, and runs it.
-ARG BUILD_VERSION=0.3.0
+ARG BUILD_VERSION=0.3.1
 FROM node:24-alpine AS build
 ARG BUILD_VERSION
 RUN apk add --no-cache git

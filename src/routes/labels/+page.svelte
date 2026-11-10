@@ -132,7 +132,7 @@
   {/each}
   <button class="btn gray block new-tpl" onclick={() => (newTpl = true)}><Icon name="plus" size={18} stroke={2.4} /> New template</button>
 
-  <div class="section-head"><h2>Label Stock</h2><button class="btn plain" onclick={() => (editingStock = { name: '', width_in: 2, height_in: 1, dpi: 203, media: 'gap', method: 'DT', darkness: 15 })}>Add</button></div>
+  <div class="section-head"><h2>Label Stock</h2><button class="btn plain" onclick={() => (editingStock = { name: '', width_in: 2, height_in: 1, dpi: 203, media: 'gap', method: 'DT', darkness: 15, speed: 3 })}>Add</button></div>
   <div class="group">
     {#each data.stocks as s (s.id)}
       <button class="row" onclick={() => (editingStock = { ...s })}>
@@ -199,8 +199,13 @@
         <label class="row"><span class="lbl">Print method</span><select name="method" value={editingStock.method ?? 'DT'}><option value="DT">Direct thermal (no ribbon)</option><option value="TT">Thermal transfer (ribbon)</option></select></label>
         <label class="row"><span class="lbl">Media</span><select name="media" value={editingStock.media ?? 'gap'}><option value="gap">Labels with gaps</option><option value="mark">Black mark</option><option value="continuous">Continuous</option></select></label>
         <label class="row"><span class="lbl">Darkness</span><input name="darkness" type="number" min="0" max="30" value={editingStock.darkness ?? 15} inputmode="numeric" /></label>
+        <label class="row"><span class="lbl">Print speed</span>
+          <select name="speed" value={String(editingStock.speed ?? 3)}>
+            <option value="2">2 in/s (gentlest)</option><option value="3">3 in/s</option><option value="4">4 in/s</option><option value="5">5 in/s</option><option value="6">6 in/s (fastest)</option>
+          </select>
+        </label>
       </div>
-      <p class="group-foot">Each print sends its method and darkness, so swapping rolls never needs the printer's menus.</p>
+      <p class="group-foot">Each print sends its method, darkness and speed, so swapping rolls never needs the printer's menus. Darkness 15 uses the printer's own setting. Labels with big black areas automatically print at 2 in/s.</p>
       {#if form?.error}<p class="error-text">{form.error}</p>{/if}
       <button class="btn block" style="margin-top:18px">Save</button>
     </form>

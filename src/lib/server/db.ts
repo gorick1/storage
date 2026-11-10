@@ -188,6 +188,9 @@ const MIGRATIONS: string[] = [
   ALTER TABLE boxes ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0;
   CREATE VIEW live_items AS SELECT * FROM items WHERE deleted_at IS NULL;
   CREATE INDEX items_deleted ON items(deleted_at);
+  `,
+  `
+  ALTER TABLE label_stocks ADD COLUMN speed INTEGER NOT NULL DEFAULT 3;
   `
 ];
 
@@ -210,6 +213,25 @@ function migrate() {
   }
 }
 migrate();
+
+/* One-time data fixups that need code, not just SQL. */
+function fixups() {
+  // v0.3.1: big solid-black header bars made the printer brown out and reset. Turn them into outlines.
+  if (getSetting('fixup_fills_v1') !== '1') {
+    const rows = db.prepare('SELECT t.id, t.elements, s.width_in, s.height_in, s.dpi FROM label_templates t JOIN label_stocks s ON s.id = t.stock_id').all() as { id: number; elements: string; width_in: number; height_in: number; dpi: number }[];
+    for (const r of rows) {
+      const area = r.width_in * r.dpi * r.height_in * r.dpi;
+      const els = JSON.parse(r.elements) as Record<string, unknown>[];
+      let changed = false;
+      for (const e of els) {
+        if (e.type === 'box' && e.fill && (e.w as number) * (e.h as number) > area * 0.06) { e.fill = false; e.thickness = Math.max(4, Number(e.thickness) || 4); changed = true; }
+        if (e.type === 'text' && e.invert) { e.invert = false; changed = true; }
+      }
+      if (changed) db.prepare('UPDATE label_templates SET elements = ? WHERE id = ?').run(JSON.stringify(els), r.id);
+    }
+    setSetting('fixup_fills_v1', '1');
+  }
+}
 
 export function now() {
   return Date.now();
@@ -235,3 +257,5 @@ export function getSetting(key: string, fallback = ''): string {
 export function setSetting(key: string, value: string) {
   db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').run(key, value);
 }
+
+fixups();
