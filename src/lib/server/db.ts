@@ -231,6 +231,45 @@ function fixups() {
     }
     setSetting('fixup_fills_v1', '1');
   }
+  // v0.3.2: most households run 2 × 1 in rolls. Add small box/place templates and make them the defaults,
+  // and treat the 2 × 1 roll as loaded so a 4 × 3 label waits instead of printing off the edge.
+  // On a brand-new install there are no stocks yet; seeding creates the small defaults itself.
+  const hasStocks = (db.prepare('SELECT COUNT(*) AS c FROM label_stocks').get() as { c: number }).c > 0;
+  if (!hasStocks) setSetting('fixup_small_v1', '1');
+  if (getSetting('fixup_small_v1') !== '1') {
+    const small = db.prepare('SELECT id, width_in, height_in, dpi FROM label_stocks WHERE width_in = 2 AND height_in = 1 ORDER BY id LIMIT 1').get() as { id: number; width_in: number; height_in: number; dpi: number } | undefined;
+    if (small) {
+      const W = Math.round(small.width_in * small.dpi), H = Math.round(small.height_in * small.dpi);
+      const t = Date.now();
+      for (const [kind, name] of [['box', 'Box · small'], ['location', 'Place · small']] as const) {
+        const exists = db.prepare('SELECT id FROM label_templates WHERE kind = ? AND stock_id = ?').get(kind, small.id);
+        if (exists) continue;
+        db.prepare('UPDATE label_templates SET is_default = 0 WHERE kind = ?').run(kind);
+        db.prepare('INSERT INTO label_templates (name, kind, stock_id, elements, is_default, auto_print, created_at, updated_at) VALUES (?, ?, ?, ?, 1, ?, ?, ?)')
+          .run(name, kind, small.id, JSON.stringify(smallLayout(kind, W, H)), kind === 'box' ? 1 : 0, t, t);
+      }
+      if (getSetting('loaded_stock_id', '0') === '0') setSetting('loaded_stock_id', String(small.id));
+    }
+    setSetting('fixup_small_v1', '1');
+  }
+}
+
+// Mirrors the small-stock branch of $lib/labels/defaults (kept here so the server can run fixups before routes load).
+function smallLayout(kind: 'box' | 'location', W: number, H: number) {
+  const pad = Math.round(Math.min(W, H) * 0.06);
+  const qrMag = H < 220 ? 4 : 5;
+  const qrSize = 25 * qrMag; // room for a 25×25 QR (longer addresses); short gtor.cc links use 21×21
+  const right = pad + qrSize + pad;
+  const colW = W - right - pad;
+  let n = 0;
+  const id = () => `s${++n}`;
+  return [
+    { id: id(), type: 'qr', x: pad, y: pad, size: qrMag },
+    { id: id(), type: 'text', x: pad, y: pad + qrSize + 8, w: qrSize, h: 24, text: '{number}', size: Math.round(H * 0.1), align: 'center', maxLines: 1 },
+    { id: id(), type: 'text', x: right, y: pad, w: colW, h: Math.round(H * 0.42), text: '{name}', size: Math.round(H * 0.2), align: 'left', maxLines: 2 },
+    { id: id(), type: 'text', x: right, y: pad + Math.round(H * 0.46), w: colW, h: 26, text: kind === 'box' ? '{location}' : '{item_count} items', size: Math.round(H * 0.11), align: 'left', maxLines: 1 },
+    { id: id(), type: 'barcode', x: right, y: H - pad - Math.round(H * 0.24), w: colW, h: Math.round(H * 0.22) }
+  ];
 }
 
 export function now() {

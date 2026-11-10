@@ -23,6 +23,20 @@ export function defaultElements(kind: Kind, widthDots: number, heightDots: numbe
       { id: id(), type: 'text', x: pad, y: pad + qrSize + 4, w: qrSize, h: 20, text: '{location}', size: Math.round(H * 0.07), align: 'center', maxLines: 1 }
     ];
   }
+  // Small stock (e.g. 2 × 1 in): QR left with the number under it, name and place on the right, barcode at the bottom.
+  if (H < 300) {
+    const qrMag = H < 220 ? 4 : 5;
+    const qrSize = 25 * qrMag; // room for a 25×25 QR (longer addresses); short gtor.cc links use 21×21
+    const right = pad + qrSize + pad;
+    const colW = W - right - pad;
+    return [
+      { id: id(), type: 'qr', x: pad, y: pad, size: qrMag },
+      { id: id(), type: 'text', x: pad, y: pad + qrSize + 8, w: qrSize, h: 24, text: '{number}', size: Math.round(H * 0.1), align: 'center', maxLines: 1 },
+      { id: id(), type: 'text', x: right, y: pad, w: colW, h: Math.round(H * 0.42), text: '{name}', size: Math.round(H * 0.2), align: 'left', maxLines: 2 },
+      { id: id(), type: 'text', x: right, y: pad + Math.round(H * 0.46), w: colW, h: 26, text: kind === 'box' ? '{location}' : '{item_count} items', size: Math.round(H * 0.11), align: 'left', maxLines: 1 },
+      { id: id(), type: 'barcode', x: right, y: H - pad - Math.round(H * 0.24), w: colW, h: Math.round(H * 0.22) }
+    ];
+  }
   // Boxes and locations: big readable name, QR you can scan from across the garage, contents list.
   const qrMag = Math.max(4, Math.min(10, Math.floor((H * 0.45) / 25)));
   const qrSize = 25 * qrMag;

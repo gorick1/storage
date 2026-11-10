@@ -1,6 +1,33 @@
 import type { LabelData, LabelElement, LabelStock } from './types';
 import { dots, fillText } from './types';
 import { code128Modules } from './code128';
+import QRCode from 'qrcode';
+
+/**
+ * QR codes are sent as an exact bitmap (^GFA) rather than the printer's ^BQ command.
+ * ^BQ positions the symbol with firmware-dependent offsets, so it landed lower than the
+ * design and overlapped other text. A bitmap prints exactly where the preview shows it.
+ */
+export function qrGraphic(text: string, mag: number): { zpl: string; size: number } {
+  const q = QRCode.create(text, { errorCorrectionLevel: 'M' });
+  const n = q.modules.size;
+  const size = n * mag;
+  const bytesPerRow = Math.ceil(size / 8);
+  let hex = '';
+  for (let y = 0; y < size; y++) {
+    const r = Math.floor(y / mag);
+    for (let b = 0; b < bytesPerRow; b++) {
+      let byte = 0;
+      for (let bit = 0; bit < 8; bit++) {
+        const x = b * 8 + bit;
+        if (x < size && q.modules.get(r, Math.floor(x / mag))) byte |= 0x80 >> bit;
+      }
+      hex += byte.toString(16).padStart(2, '0').toUpperCase();
+    }
+  }
+  const total = bytesPerRow * size;
+  return { zpl: `^GFA,${total},${total},${bytesPerRow},${hex}`, size };
+}
 
 function esc(s: string) {
   // ^FH lets us hex-escape the two characters ZPL reserves.
@@ -27,9 +54,8 @@ export function elementZpl(el: LabelElement, data: LabelData): string {
       return `^FO${el.x},${el.y}^A0N,${el.size},${fontWidth(el.size)}^FB${el.w},${el.maxLines},0,${ALIGN[el.align]},0${rev}^FH^FD${text}^FS`;
     }
     case 'qr': {
-      // ^BQ adds a fixed 10-dot top offset on most firmware; compensate so preview and print line up.
       const mag = Math.max(1, Math.min(10, el.size));
-      return `^FO${el.x},${Math.max(0, el.y - 10)}^BQN,2,${mag}^FDMA,${data.qr}^FS`;
+      return `^FO${el.x},${el.y}${qrGraphic(data.qr, mag).zpl}^FS`;
     }
     case 'barcode': {
       const m = barcodeModule(data.code, el.w);

@@ -82,9 +82,12 @@ export function seedLabels() {
   const sm = { w: dots(2, 203), h: dots(1, 203) };
   const lg = { w: dots(4, 203), h: dots(3, 203) };
   saveTemplate({ name: 'Item · small', kind: 'item', stock_id: small, elements: defaultElements('item', sm.w, sm.h), is_default: true, auto_print: true });
-  saveTemplate({ name: 'Box · large', kind: 'box', stock_id: large, elements: defaultElements('box', lg.w, lg.h), is_default: true, auto_print: true });
-  saveTemplate({ name: 'Location · large', kind: 'location', stock_id: large, elements: defaultElements('location', lg.w, lg.h), is_default: true, auto_print: false });
-  db.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES ('loaded_stock_id', '0')").run();
+  saveTemplate({ name: 'Box · large', kind: 'box', stock_id: large, elements: defaultElements('box', lg.w, lg.h), is_default: false, auto_print: true });
+  saveTemplate({ name: 'Location · large', kind: 'location', stock_id: large, elements: defaultElements('location', lg.w, lg.h), is_default: false, auto_print: false });
+  // 2 × 1 is the common roll, so the small layouts are the defaults and that roll counts as loaded.
+  saveTemplate({ name: 'Box · small', kind: 'box', stock_id: small, elements: defaultElements('box', sm.w, sm.h), is_default: true, auto_print: true });
+  saveTemplate({ name: 'Place · small', kind: 'location', stock_id: small, elements: defaultElements('location', sm.w, sm.h), is_default: true, auto_print: false });
+  db.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES ('loaded_stock_id', ?)").run(String(small));
 }
 
 export function qrBase(origin: string) {
